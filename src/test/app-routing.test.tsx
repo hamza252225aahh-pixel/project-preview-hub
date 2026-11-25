@@ -14,4 +14,13 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+
+  it("matches a real page for every tafsir surah link", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+
+    for (const number of [1, 2, 57, 114]) {
+      const matches = router.matchRoutes(`/tafsir/${number}`);
+      expect(matches.at(-1)?.routeId, `/tafsir/${number}`).not.toBe(rootRouteId);
+    }
+  });
 });
