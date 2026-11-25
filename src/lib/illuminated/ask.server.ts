@@ -3,7 +3,7 @@ export type AskResult =
   | { ok: false; error: string };
 
 export async function askQuestion(question: string): Promise<AskResult> {
-  const key = process.env["GEMINI_API_KEY"] || process.env["LOVABLE_API_KEY"];
+  const key = process.env["LOVABLE_API_KEY"];
   if (!key) return { ok: false, error: "خدمة الإجابات غير مهيأة حاليًا." };
   try {
     const { answerReligiousQuestion } = await import("./answer.server");

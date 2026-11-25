@@ -18,7 +18,7 @@ function findMatches(question: string): Entry[] {
 export async function answerReligiousQuestion(question: string, apiKey: string) {
   const matches = findMatches(question);
   const geminiKey = process.env["GEMINI_API_KEY"] || apiKey;
-  const useGemini = Boolean(process.env["GEMINI_API_KEY"]);
+  const useGemini = false;
 
   const { result } = createResponsesCall(
     new Request("https://app.internal/illuminated-book"),

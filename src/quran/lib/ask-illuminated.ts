@@ -83,6 +83,30 @@ async function askWorker(question: string, references: CorpusEntry[]): Promise<s
   }
 }
 
+// Lovable AI answers via the published site (the offline APK has no server).
+const PUBLISHED_ANSWER_URL = "https://repo-preview-lounge.lovable.app/api/public/illuminated-book";
+
+async function askLovable(question: string): Promise<string | null> {
+  try {
+    const isNative = typeof window !== "undefined" && /^(capacitor:|https?:\/\/localhost)/.test(window.location.origin);
+    const url = isNative ? PUBLISHED_ANSWER_URL : "/api/public/illuminated-book";
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 60000);
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { ok?: boolean; answer?: string };
+    return data.ok ? data.answer?.trim() || null : null;
+  } catch {
+    return null;
+  }
+}
+
 async function loadIndex(): Promise<IndexedEntry[]> {
   if (cachedIndex) return cachedIndex;
   const url = `${import.meta.env.BASE_URL}data/illuminated-corpus.json`;
@@ -104,7 +128,7 @@ export async function askIlluminated(question: string): Promise<IlluminatedAnswe
   try {
     const index = await loadIndex();
     const matches = searchCorpus(trimmed, index, 5);
-    const aiAnswer = await askWorker(trimmed, matches);
+    const aiAnswer = (await askLovable(trimmed)) ?? (await askWorker(trimmed, matches));
     if (aiAnswer) return { ok: true, answer: aiAnswer, references: matches };
     if (!matches.length) {
       return {
