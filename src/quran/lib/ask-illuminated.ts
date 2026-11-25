@@ -61,7 +61,7 @@ export function searchCorpus(question: string, entries: IndexedEntry[], limit = 
 }
 
 // Cloudflare Worker URL (Gemini answers). Leave empty to use offline search only.
-export const ILLUMINATED_WORKER_URL = "https://quran-kareem.hamza252225aahh.workers.dev";
+export const ILLUMINATED_WORKER_URL = "https://quran-ai.hamza252225aahh.workers.dev";
 
 async function askWorker(question: string, references: CorpusEntry[]): Promise<string | null> {
   if (!ILLUMINATED_WORKER_URL) return null;
