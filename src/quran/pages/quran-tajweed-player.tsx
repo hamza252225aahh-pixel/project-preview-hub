@@ -9,6 +9,8 @@ import { getCachedAudioObjectUrl } from "@/quran/lib/offline-audio";
 import { useStopOnAppExit } from "@/quran/hooks/useStopOnAppExit";
 
 let _autoPlayOnMount = false;
+/* The chosen play mode stays in effect across surahs until the user changes it. */
+let _playMode: "off" | "auto" | "shuffle" | "repeat" = "auto";
 
 export default function QuranTajweedPlayer() {
   const [location, setLocation] = useLocation();
@@ -23,7 +25,8 @@ export default function QuranTajweedPlayer() {
   const [duration, setDuration] = useState(0);
   const [buffering, setBuffering] = useState(false);
   useStopOnAppExit(audioRef, () => { setPlaying(false); setBuffering(false); });
-  const [playMode, setPlayMode] = useState<"off" | "auto" | "shuffle" | "repeat">("auto");
+  const [playMode, setPlayModeState] = useState(_playMode);
+  const setPlayMode = (m: typeof _playMode) => { _playMode = m; setPlayModeState(m); };
 
   const audioUrl = `https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/${number.toString().padStart(3, "0")}.mp3`;
   /* The source is tagged with its surah so a stale address from the previous surah is never played. */
@@ -116,13 +119,13 @@ export default function QuranTajweedPlayer() {
 
   function goNext() {
     if (!nextNum) return;
-    _autoPlayOnMount = playing || buffering;
+    _autoPlayOnMount = false; audioRef.current?.pause(); setPlaying(false);
     setLocation(`/quran-tajweed/${nextNum}`);
   }
 
   function goPrev() {
     if (!prevNum) return;
-    _autoPlayOnMount = playing || buffering;
+    _autoPlayOnMount = false; audioRef.current?.pause(); setPlaying(false);
     setLocation(`/quran-tajweed/${prevNum}`);
   }
 
