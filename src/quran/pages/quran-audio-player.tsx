@@ -113,6 +113,7 @@ export default function QuranAudioPlayer() {
   }
 
   function handleEnded() {
+    if (loadedNumberRef.current !== number) return;
     if (targetAyah) { setPlaying(false); setCurrentTime(0); return; }
     if (playMode === "repeat") {
       const audio = audioRef.current;
@@ -121,7 +122,8 @@ export default function QuranAudioPlayer() {
         void audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
       }
     } else if (playMode === "shuffle") {
-      const randomNum = Math.floor(Math.random() * 114) + 1;
+      let randomNum = Math.floor(Math.random() * 114) + 1;
+      if (randomNum === number) randomNum = (number % 114) + 1;
       _autoPlayOnMount = true;
       setLocation(`/quran-audio/${randomNum}`);
     } else if (playMode === "auto" && nextNum) {
@@ -135,12 +137,13 @@ export default function QuranAudioPlayer() {
 
   function goNext() {
     if (!nextNum) return;
-    _autoPlayOnMount = true;
+    _autoPlayOnMount = playing || buffering;
     setLocation(`/quran-audio/${nextNum}`);
   }
 
   function goPrev() {
     if (!prevNum) return;
+    _autoPlayOnMount = playing || buffering;
     setLocation(`/quran-audio/${prevNum}`);
   }
 
@@ -154,7 +157,7 @@ export default function QuranAudioPlayer() {
   /** Browsers refine the length of a recitation while it loads; always show the latest real value. */
   function syncDuration() {
     const d = audioRef.current?.duration;
-    setDuration(d && Number.isFinite(d) ? d : 0);
+    if (d && Number.isFinite(d)) setDuration(d);
   }
 
   function formatTime(s: number) {
@@ -293,8 +296,8 @@ export default function QuranAudioPlayer() {
           {playMode === "shuffle" ? <Shuffle className="w-4 h-4 text-primary" /> : playMode === "repeat" ? <Repeat1 className="w-4 h-4 text-primary" /> : <RotateCw className={`w-4 h-4 ${playMode === "auto" ? "text-primary" : "text-muted-foreground"}`} />}
         </div>
       </div>
-      <audio ref={audioRef} src={audioSourceUrl || undefined}
-        onTimeUpdate={() => { if (audioRef.current) setCurrentTime(audioRef.current.currentTime); }}
+      <audio ref={audioRef}
+        onTimeUpdate={() => { const a = audioRef.current; if (a && loadedNumberRef.current === number) setCurrentTime(a.currentTime); }}
         onLoadedMetadata={syncDuration}
         onDurationChange={syncDuration}
         onEnded={handleEnded}

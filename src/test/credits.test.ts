@@ -1,12 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { START_CREDITS, afterQuestion, canAsk, canShowInterstitial, isPlayerPage, rewardFor, showsBanner } from "@/quran/lib/credits";
+import { DAILY_CREDITS, applyDailyRefill, markIfEmpty, START_CREDITS, afterQuestion, canAsk, canShowInterstitial, isPlayerPage, rewardFor, showsBanner } from "@/quran/lib/credits";
 
 describe("illuminated book credits", () => {
-  it("starts with 100 credits", () => expect(START_CREDITS).toBe(100));
-  it("each question costs 15", () => expect(afterQuestion(100)).toBe(85));
+  it("starts with 30 credits", () => expect(START_CREDITS).toBe(30));
+  it("30 credits are added daily", () => expect(DAILY_CREDITS).toBe(30));
+  it("refill comes 24h after running out", () => expect(applyDailyRefill(0, 0, 86_400_000)).toEqual({ balance: 30, emptyAt: null }));
+  it("no refill before 24h", () => expect(applyDailyRefill(0, 0, 86_399_999).balance).toBe(0));
+  it("countdown starts when balance runs out", () => expect(markIfEmpty(0, null, 5)).toBe(5));
+  it("each question costs 15", () => expect(afterQuestion(30)).toBe(15));
   it("cannot ask with less than 15", () => { expect(canAsk(14)).toBe(false); expect(canAsk(15)).toBe(true); });
-  it("2 ads give 50", () => expect(rewardFor(2)).toBe(50));
-  it("3 ads give 105", () => expect(rewardFor(3)).toBe(105));
+  it("2 ads give 45", () => expect(rewardFor(2)).toBe(45));
+  it("3 ads give 90", () => expect(rewardFor(3)).toBe(90));
   it("1 ad gives nothing", () => expect(rewardFor(1)).toBe(0));
 });
 
@@ -22,4 +26,9 @@ describe("where ads may appear", () => {
   it("no banner on the home page", () => expect(showsBanner("/")).toBe(false));
   it("banner on the hadith page", () => expect(showsBanner("/hadith")).toBe(true));
   it("banner on the illuminated book page", () => expect(showsBanner("/illuminated-book")).toBe(true));
+});
+
+import { FEATURE_UNLOCK_ADS } from "@/quran/lib/credits";
+describe("qibla and prayer times unlock", () => {
+  it("needs two ads once", () => expect(FEATURE_UNLOCK_ADS).toBe(2));
 });

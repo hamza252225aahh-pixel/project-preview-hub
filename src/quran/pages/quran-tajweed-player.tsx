@@ -93,6 +93,7 @@ export default function QuranTajweedPlayer() {
   }
 
   function handleEnded() {
+    if (loadedNumberRef.current !== number) return;
     if (playMode === "repeat") {
       const audio = audioRef.current;
       if (audio) {
@@ -100,7 +101,8 @@ export default function QuranTajweedPlayer() {
         void audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
       }
     } else if (playMode === "shuffle") {
-      const randomNum = Math.floor(Math.random() * 114) + 1;
+      let randomNum = Math.floor(Math.random() * 114) + 1;
+      if (randomNum === number) randomNum = (number % 114) + 1;
       _autoPlayOnMount = true;
       setLocation(`/quran-tajweed/${randomNum}`);
     } else if (playMode === "auto" && nextNum) {
@@ -114,12 +116,13 @@ export default function QuranTajweedPlayer() {
 
   function goNext() {
     if (!nextNum) return;
-    _autoPlayOnMount = true;
+    _autoPlayOnMount = playing || buffering;
     setLocation(`/quran-tajweed/${nextNum}`);
   }
 
   function goPrev() {
     if (!prevNum) return;
+    _autoPlayOnMount = playing || buffering;
     setLocation(`/quran-tajweed/${prevNum}`);
   }
 
@@ -133,7 +136,7 @@ export default function QuranTajweedPlayer() {
   /** Browsers refine the length of a recitation while it loads; always show the latest real value. */
   function syncDuration() {
     const d = audioRef.current?.duration;
-    setDuration(d && Number.isFinite(d) ? d : 0);
+    if (d && Number.isFinite(d)) setDuration(d);
   }
 
   function formatTime(s: number) {
@@ -264,8 +267,8 @@ export default function QuranTajweedPlayer() {
         تلاوة الشيخ محمد صديق المنشاوي — المصحف المجوّد
       </p>
 
-      <audio ref={audioRef} src={audioSourceUrl}
-        onTimeUpdate={() => { if (audioRef.current) setCurrentTime(audioRef.current.currentTime); }}
+      <audio ref={audioRef}
+        onTimeUpdate={() => { const a = audioRef.current; if (a && loadedNumberRef.current === number) setCurrentTime(a.currentTime); }}
         onLoadedMetadata={syncDuration}
         onDurationChange={syncDuration}
         onEnded={handleEnded}

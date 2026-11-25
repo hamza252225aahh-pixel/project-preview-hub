@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AD_PACKAGES, QUESTION_COST, START_CREDITS, afterQuestion, canAsk, loadCredits, rewardFor, saveCredits } from "@/quran/lib/credits";
+import { msUntilRefill, AD_PACKAGES, QUESTION_COST, START_CREDITS, afterQuestion, canAsk, loadCredits, rewardFor, saveCredits } from "@/quran/lib/credits";
 import { adsAvailable, showRewarded } from "@/quran/lib/ads";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, BookOpen, Send, LoaderCircle, RotateCcw, ShieldCheck, SkipForward } from "lucide-react";
@@ -93,6 +93,7 @@ export default function IlluminatedBook() {
             </div>
             {question.trim().length > 0 && question.trim().length < 3 && !busy && <p className="text-sm text-muted-foreground">اكتب سؤالًا من ثلاثة أحرف على الأقل.</p>}
             <p className="text-sm font-semibold text-foreground" data-testid="credits">رصيدك: {credits} كريدت · السؤال يكلّف {QUESTION_COST}</p>
+            {!canAsk(credits) && !busy && (() => { const ms = msUntilRefill(); return ms !== null ? <p className="text-xs text-muted-foreground">يُضاف 30 كريدت مجانًا بعد {Math.floor(ms / 3600000)} ساعة و{Math.ceil((ms % 3600000) / 60000)} دقيقة</p> : null; })()}
             {!canAsk(credits) && !busy && (
               <div className="w-full max-w-xl space-y-3 rounded-xl border border-border bg-card p-4 text-center">
                 <p className="font-semibold text-foreground">انتهى رصيدك. شاهد إعلانات فيديو (30 ثانية لكل إعلان) لتحصل على رصيد جديد:</p>

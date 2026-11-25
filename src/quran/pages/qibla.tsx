@@ -1,3 +1,4 @@
+import { FeatureUnlock } from "@/quran/components/feature-unlock";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, Compass } from "lucide-react";
@@ -19,6 +20,10 @@ function calcQibla(lat: number, lon: number) {
 }
 
 export default function Qibla() {
+  return <FeatureUnlock><QiblaContent /></FeatureUnlock>;
+}
+
+function QiblaContent() {
   const [qiblaAngle, setQiblaAngle] = useState<number | null>(null);
   const [compass, setCompass] = useState(0);
   const [locationError, setLocationError] = useState<string | null>(null);

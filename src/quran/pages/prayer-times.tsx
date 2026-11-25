@@ -1,3 +1,4 @@
+import { FeatureUnlock } from "@/quran/components/feature-unlock";
 import { useState, useEffect } from "react";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight } from "lucide-react";
@@ -54,6 +55,10 @@ function getNextPrayer(times: PrayerTimes): { name: string; key: keyof PrayerTim
 }
 
 export default function PrayerTimes() {
+  return <FeatureUnlock><PrayerTimesContent /></FeatureUnlock>;
+}
+
+function PrayerTimesContent() {
   const [times, setTimes] = useState<PrayerTimes | null>(null);
   const [city, setCity] = useState<string>("");
   const [loading, setLoading] = useState(true);
