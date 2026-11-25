@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "@/quran/wouter-shim";
 import { ChevronRight, Play, Pause, RotateCcw, RotateCw, SkipBack, SkipForward, Heart, Shuffle, Repeat1 } from "lucide-react";
@@ -13,6 +14,7 @@ let _autoPlayOnMount = false;
 let _playMode: "off" | "auto" | "shuffle" | "repeat" = "auto";
 
 export default function QuranTajweedPlayer() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [location, setLocation] = useLocation();
   const number = parseInt(location.split("/").pop() || "1");
   const { surahs } = useSurahList();
@@ -151,13 +153,12 @@ export default function QuranTajweedPlayer() {
   }
 
   return (
-    <div className="max-w-lg mx-auto space-y-6 pb-10 pt-2" dir="rtl">
+    <div className="max-w-lg mx-auto space-y-6 pb-10 pt-2" dir={uiDir}>
       <div className="flex items-center justify-between">
         <Link href="/quran-tajweed"
           className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors font-sans text-sm">
           <ChevronRight className="w-5 h-5" />
-          قائمة السور
-        </Link>
+          {tr("قائمة السور")}</Link>
         <div className="flex items-center gap-2">
           <OfflineDownloadButton type="tajweed" number={number} showLabel />
           <button
@@ -168,7 +169,7 @@ export default function QuranTajweedPlayer() {
                 : "border-border text-muted-foreground hover:border-rose-400 hover:text-rose-500"
             }`}>
             <Heart className="w-4 h-4" fill={isFavorite(number) ? "currentColor" : "none"} />
-            {isFavorite(number) ? "في المفضلة" : "أضف للمفضلة"}
+            {isFavorite(number) ? tr("في المفضلة") : tr("أضف للمفضلة")}
           </button>
         </div>
       </div>
@@ -179,7 +180,7 @@ export default function QuranTajweedPlayer() {
             <h1 className="font-serif text-5xl text-primary">{surah.name}</h1>
             <p className="font-sans text-muted-foreground">{surah.englishName} — {surah.englishNameTranslation}</p>
             <p className="font-sans text-xs text-muted-foreground">
-              {surah.numberOfAyahs} آية — {surah.revelationType === "Meccan" ? "مكية" : "مدنية"}
+              {surah.numberOfAyahs} آية — {surah.revelationType === "Meccan" ? tr("مكية") : tr("مدنية")}
             </p>
           </>
         ) : <Skeleton className="h-12 w-48 mx-auto" />}
@@ -204,12 +205,12 @@ export default function QuranTajweedPlayer() {
 
         {/* central control cluster — identical to the murattal player */}
         <div className="flex items-center justify-center gap-3 sm:gap-5" dir="ltr">
-          <button onClick={goPrev} disabled={!prevNum} aria-label="السورة السابقة"
+          <button onClick={goPrev} disabled={!prevNum} aria-label={tr("السورة السابقة")}
             className="w-10 h-10 rounded-full border border-primary/25 bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-30 transition-all"
             data-testid="button-tajweed-prev-surah">
             <SkipBack className="w-5 h-5 mx-auto" />
           </button>
-          <button onClick={() => seekBy(10)} aria-label="تقديم 10 ثوانٍ"
+          <button onClick={() => seekBy(10)} aria-label={tr("تقديم 10 ثوانٍ")}
             className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/85 transition-all"
             data-testid="button-tajweed-seek-forward">
             <span className="relative block">
@@ -227,7 +228,7 @@ export default function QuranTajweedPlayer() {
                 : <Play className="w-8 h-8 mr-[-3px]" />
             }
           </button>
-          <button onClick={() => seekBy(-10)} aria-label="تأخير 10 ثوانٍ"
+          <button onClick={() => seekBy(-10)} aria-label={tr("تأخير 10 ثوانٍ")}
             className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/85 transition-all"
             data-testid="button-tajweed-seek-back">
             <span className="relative block">
@@ -235,7 +236,7 @@ export default function QuranTajweedPlayer() {
               <span className="absolute inset-0 flex items-center justify-center text-[10px] text-primary-foreground">10</span>
             </span>
           </button>
-          <button onClick={goNext} disabled={!nextNum} aria-label="السورة التالية"
+          <button onClick={goNext} disabled={!nextNum} aria-label={tr("السورة التالية")}
             className="w-10 h-10 rounded-full border border-primary/25 bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-30 transition-all"
             data-testid="button-tajweed-next-surah">
             <SkipForward className="w-5 h-5 mx-auto" />
@@ -247,8 +248,7 @@ export default function QuranTajweedPlayer() {
           <button onClick={() => {
             if (audioRef.current) { audioRef.current.currentTime = 0; setCurrentTime(0); }
           }} className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-xs font-sans" data-testid="button-tajweed-restart">
-            <RotateCcw className="w-4 h-4" /> إعادة
-          </button>
+            <RotateCcw className="w-4 h-4" /> {tr("إعادة")}</button>
           {prevSurah && <button onClick={goPrev} className="text-primary hover:underline text-xs font-sans">{prevSurah.name}</button>}
           {nextSurah && <button onClick={goNext} className="text-primary hover:underline text-xs font-sans">{nextSurah.name}</button>}
         </div>
@@ -256,19 +256,18 @@ export default function QuranTajweedPlayer() {
         <div className="flex items-center justify-center gap-2 pt-4 border-t border-border">
           <select value={playMode} onChange={(e) => setPlayMode(e.target.value as typeof playMode)}
             className="bg-background border border-border rounded-xl px-3 py-2 text-xs font-sans text-foreground outline-none focus:ring-2 focus:ring-primary/30"
-            aria-label="خاصية التشغيل التلقائي" data-testid="select-tajweed-play-mode">
-            <option value="auto">التشغيل التلقائي</option>
-            <option value="shuffle">التشغيل العشوائي</option>
-            <option value="repeat">تكرار السورة</option>
-            <option value="off">إيقاف التشغيل التلقائي</option>
+            aria-label={tr("خاصية التشغيل التلقائي")} data-testid="select-tajweed-play-mode">
+            <option value="auto">{tr("التشغيل التلقائي")}</option>
+            <option value="shuffle">{tr("التشغيل العشوائي")}</option>
+            <option value="repeat">{tr("تكرار السورة")}</option>
+            <option value="off">{tr("إيقاف التشغيل التلقائي")}</option>
           </select>
           {playMode === "shuffle" ? <Shuffle className="w-4 h-4 text-primary" /> : playMode === "repeat" ? <Repeat1 className="w-4 h-4 text-primary" /> : <RotateCw className={`w-4 h-4 ${playMode === "auto" ? "text-primary" : "text-muted-foreground"}`} />}
         </div>
       </div>
 
       <p className="text-center font-sans text-xs text-muted-foreground">
-        تلاوة الشيخ محمد صديق المنشاوي — المصحف المجوّد
-      </p>
+        {tr("تلاوة الشيخ محمد صديق المنشاوي — المصحف المجوّد")}</p>
 
       <audio ref={audioRef}
         onTimeUpdate={() => { const a = audioRef.current; if (a && loadedNumberRef.current === number) setCurrentTime(a.currentTime); }}

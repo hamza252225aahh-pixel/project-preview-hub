@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useSearch } from "@/quran/wouter-shim";
 import { ChevronRight } from "lucide-react";
@@ -158,13 +159,14 @@ function MushafPage({
   highlightAyah: number | null;
   ayahRefs: React.MutableRefObject<Record<number, HTMLSpanElement | null>>;
 }) {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   return (
     <div className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow-sm">
       {/* Header row: juz | surah name | page number */}
       <div className="flex items-center justify-between px-5 pt-3 pb-1 text-xs text-muted-foreground font-sans">
-        <span className="text-[18px]">جزء {toEastern(page.juz)}</span>
+        <span className="text-[18px]">{tr("جزء")}{toEastern(page.juz)}</span>
         <span className="font-serif text-primary/80 font-bold text-[28px]">{surahName}</span>
-        <span className="text-[18px]">صفحة {toEastern(page.pageNum)}</span>
+        <span className="text-[18px]">{tr("صفحة")}{toEastern(page.pageNum)}</span>
       </div>
       <div className="px-4">
         <PageDivider />
@@ -210,6 +212,7 @@ function MushafPage({
 
 /* ── Main component ────────────────────────────────────────────────── */
 export default function QuranWrittenReader() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [location] = useLocation();
   const searchStr = useSearch();
   const number = parseInt(location.split("/").pop() || "1");
@@ -243,7 +246,7 @@ export default function QuranWrittenReader() {
   }, [highlightAyah, surah]);
 
   return (
-    <div className="pb-10" dir="rtl">
+    <div className="pb-10" dir={uiDir}>
       {/* Sticky header */}
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border px-2 py-2 mb-4">
         <div className="flex items-center gap-3 flex-row text-[#2d241b]">
@@ -259,7 +262,7 @@ export default function QuranWrittenReader() {
               </h1>
               <p className="text-muted-foreground font-sans text-[16px]">
                 {surah.englishName} — {surah.numberOfAyahs} آية —{" "}
-                {surah.revelationType === "Meccan" ? "مكية" : "مدنية"}
+                {surah.revelationType === "Meccan" ? tr("مكية") : tr("مدنية")}
               </p>
             </div>
           ) : (
@@ -282,8 +285,7 @@ export default function QuranWrittenReader() {
       {/* Error */}
       {error && (
         <div className="mx-2 p-4 bg-red-50 text-red-600 rounded-xl text-center font-sans text-sm">
-          تعذّر تحميل السورة. يرجى المحاولة لاحقاً.
-        </div>
+          {tr("تعذّر تحميل السورة. يرجى المحاولة لاحقاً.")}</div>
       )}
       {/* Pages */}
       {surah && (
@@ -305,15 +307,13 @@ export default function QuranWrittenReader() {
                 className="flex items-center gap-1 text-primary font-sans text-sm hover:underline"
                 data-testid="link-prev-surah">
                 <ChevronRight className="w-4 h-4" />
-                السورة السابقة
-              </Link>
+                {tr("السورة السابقة")}</Link>
             ) : <span />}
             {number < 114 ? (
               <Link href={`/quran-written/${number + 1}`}
                 className="flex items-center gap-1 text-primary font-sans hover:underline text-[22px]"
                 data-testid="link-next-surah">
-                السورة التالية
-                <ChevronRight className="w-4 h-4 rotate-180" />
+                {tr("السورة التالية")}<ChevronRight className="w-4 h-4 rotate-180" />
               </Link>
             ) : <span />}
           </div>

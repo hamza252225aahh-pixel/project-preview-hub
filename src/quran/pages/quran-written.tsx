@@ -1,26 +1,27 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useSurahList } from "@/quran/hooks/useSurahList";
 import { Skeleton } from "@/quran/components/ui/skeleton";
 
 export default function QuranWritten() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const { surahs, loading, error } = useSurahList();
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-6 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="font-serif text-primary font-bold text-[32px]">القرآن المكتوب</h1>
-          <p className="text-muted-foreground text-sm font-sans">اختر سورة للقراءة</p>
+          <h1 className="font-serif text-primary font-bold text-[32px]">{tr("القرآن المكتوب")}</h1>
+          <p className="text-muted-foreground text-sm font-sans">{tr("اختر سورة للقراءة")}</p>
         </div>
       </div>
       {error && (
         <div className="p-4 bg-red-50 text-red-700 rounded-xl text-center font-sans text-sm">
-          تعذّر تحميل قائمة السور. يرجى المحاولة لاحقاً.
-        </div>
+          {tr("تعذّر تحميل قائمة السور. يرجى المحاولة لاحقاً.")}</div>
       )}
       <div className="space-y-2">
         {loading
@@ -49,8 +50,7 @@ export default function QuranWritten() {
                 </div>
                 <div className="text-left flex-shrink-0">
                   <span className="font-sans text-muted-foreground px-2 py-1 rounded-full bg-muted text-[15px]">
-                    {surah.numberOfAyahs} آية
-                  </span>
+                    {surah.numberOfAyahs} {tr("آية")}</span>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
               </Link>

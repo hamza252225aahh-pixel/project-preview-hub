@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { FeatureUnlock } from "@/quran/components/feature-unlock";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@/quran/wouter-shim";
@@ -25,6 +26,7 @@ export default function Qibla() {
 }
 
 function QiblaContent() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [qiblaAngle, setQiblaAngle] = useState<number | null>(null);
   const [compass, setCompass] = useState(0);
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -43,7 +45,7 @@ function QiblaContent() {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setLocationError("هذا الجهاز لا يدعم تحديد الموقع الجغرافي.");
+      setLocationError(tr("هذا الجهاز لا يدعم تحديد الموقع الجغرافي."));
       return;
     }
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -51,10 +53,10 @@ function QiblaContent() {
       setQiblaAngle(calcQibla(latitude, longitude));
       const a = Math.sin(toRad(MECCA_LAT - latitude) / 2) ** 2 + Math.cos(toRad(latitude)) * Math.cos(toRad(MECCA_LAT)) * Math.sin(toRad(MECCA_LON - longitude) / 2) ** 2;
       setDistance(Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a)))));
-    }, () => setLocationError("تعذّر الحصول على موقعك. يرجى السماح بالوصول إلى الموقع الجغرافي."), { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+    }, () => setLocationError(tr("تعذّر الحصول على موقعك. يرجى السماح بالوصول إلى الموقع الجغرافي.")), { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
 
     if (typeof DeviceOrientationEvent === "undefined") {
-      setOrientationError("البوصلة غير متاحة على هذا الجهاز؛ الزاوية المعروضة محسوبة من الشمال حسب موقعك.");
+      setOrientationError(tr("البوصلة غير متاحة على هذا الجهاز؛ الزاوية المعروضة محسوبة من الشمال حسب موقعك."));
       return;
     }
     const requiresPermission = typeof (DeviceOrientationEvent as unknown as OrientationPermission).requestPermission === "function";
@@ -67,7 +69,7 @@ function QiblaContent() {
     function expireHeading() {
       setHasHeading(false);
       headingRef.current = null;
-      setOrientationError("لم تصل قراءة البوصلة. تأكد من تفعيل المستشعرات؛ الزاوية المعروضة محسوبة من الشمال.");
+      setOrientationError(tr("لم تصل قراءة البوصلة. تأكد من تفعيل المستشعرات؛ الزاوية المعروضة محسوبة من الشمال."));
     }
     let timer = window.setTimeout(expireHeading, 6000);
     function handleOrientation(event: DeviceOrientationEvent) {
@@ -113,10 +115,10 @@ function QiblaContent() {
         setNeedsPermission(false);
         setOrientationError(null);
       } else {
-        setOrientationError("لم يُسمح باستخدام البوصلة. اسمح بالوصول إلى الحركة والاتجاه لتحديد اتجاه القبلة أثناء دوران الجهاز.");
+        setOrientationError(tr("لم يُسمح باستخدام البوصلة. اسمح بالوصول إلى الحركة والاتجاه لتحديد اتجاه القبلة أثناء دوران الجهاز."));
       }
     } catch {
-      setOrientationError("تعذّر تفعيل البوصلة. افتح التطبيق في متصفح يدعم مستشعرات الحركة ثم حاول مجددًا.");
+      setOrientationError(tr("تعذّر تفعيل البوصلة. افتح التطبيق في متصفح يدعم مستشعرات الحركة ثم حاول مجددًا."));
     } finally {
       setPermissionPending(false);
     }
@@ -124,38 +126,38 @@ function QiblaContent() {
 
   const needleAngle = (qiblaAngle ?? 0) - compass;
   return (
-    <div className="max-w-md mx-auto space-y-8 pb-10" dir="rtl">
+    <div className="max-w-md mx-auto space-y-8 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
-        <Link href="/" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home" aria-label="العودة للرئيسية">
+        <Link href="/" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home" aria-label={tr("العودة للرئيسية")}>
           <ChevronRight className="w-6 h-6" />
         </Link>
-        <h1 className="font-sans text-2xl text-primary font-bold">اتجاه القبلة</h1>
+        <h1 className="font-sans text-2xl text-primary font-bold">{tr("اتجاه القبلة")}</h1>
       </div>
       {locationError && <p role="alert" className="p-4 bg-muted border border-border text-foreground rounded-lg text-center font-sans text-sm leading-relaxed">{locationError}</p>}
       {qiblaAngle === null && !locationError && (
         <div className="text-center py-12 space-y-3" role="status">
           <div className="w-12 h-12 border-3 border-primary border-t-transparent rounded-full motion-safe:animate-spin mx-auto" />
-          <p className="font-sans text-muted-foreground text-sm">جارٍ تحديد موقعك...</p>
+          <p className="font-sans text-muted-foreground text-sm">{tr("جارٍ تحديد موقعك...")}</p>
         </div>
       )}
       {needsPermission && (
         <div className="text-center">
-          <Button onClick={enableCompass} disabled={permissionPending}><Compass />{permissionPending ? "جارٍ تفعيل البوصلة..." : "تفعيل البوصلة"}</Button>
+          <Button onClick={enableCompass} disabled={permissionPending}><Compass />{permissionPending ? tr("جارٍ تفعيل البوصلة...") : tr("تفعيل البوصلة")}</Button>
         </div>
       )}
       {orientationError && <p role="status" className="text-center text-sm text-muted-foreground leading-relaxed">{orientationError}</p>}
       {qiblaAngle !== null && (
         <>
-          {distance !== null && <p className="font-sans text-muted-foreground text-sm text-center">المسافة إلى مكة المكرمة: <span className="font-semibold text-primary">{distance.toLocaleString("ar-SA")} كم</span></p>}
+          {distance !== null && <p className="font-sans text-muted-foreground text-sm text-center">{tr("المسافة إلى مكة المكرمة:")}<span className="font-semibold text-primary">{distance.toLocaleString("ar-SA")} {tr("كم")}</span></p>}
           <div className="flex flex-col items-center justify-center gap-4 py-4">
             <span
               role="status"
-              aria-label={alignment === "aligned" ? "الاتجاه مطابق للقبلة" : alignment === "misaligned" ? "الاتجاه غير مطابق للقبلة" : "بانتظار قراءة صحيحة للبوصلة"}
+              aria-label={alignment === "aligned" ? tr("الاتجاه مطابق للقبلة") : alignment === "misaligned" ? tr("الاتجاه غير مطابق للقبلة") : tr("بانتظار قراءة صحيحة للبوصلة")}
               data-testid="qibla-alignment"
               data-alignment={alignment}
               className="qibla-alignment-light block h-5 w-5 shrink-0 rounded-full"
             />
-            <div className="relative w-72 h-72 shrink-0 overflow-hidden rounded-full" role="img" aria-label="بوصلة اتجاه القبلة">
+            <div className="relative w-72 h-72 shrink-0 overflow-hidden rounded-full" role="img" aria-label={tr("بوصلة اتجاه القبلة")}>
               <svg viewBox="0 0 288 288" className="absolute inset-0 w-full h-full" aria-hidden="true">
                 <circle cx="144" cy="144" r="138" fill="none" stroke="hsl(var(--border))" strokeWidth="2" />
                 <circle cx="144" cy="144" r="120" fill="hsl(var(--card))" />
@@ -182,15 +184,15 @@ function QiblaContent() {
                   <circle cx="144" cy="144" r="4" fill="hsl(var(--primary-foreground))" />
                 </svg>
               </div>
-              <span className="absolute inset-x-0 top-40 text-center font-sans text-xs text-primary font-bold pointer-events-none">الكعبة</span>
+              <span className="absolute inset-x-0 top-40 text-center font-sans text-xs text-primary font-bold pointer-events-none">{tr("الكعبة")}</span>
             </div>
           </div>
           <div className="border-t border-border pt-5 text-center space-y-2">
             <p className="font-sans text-3xl text-primary"><bdi>{Math.round(qiblaAngle).toLocaleString("ar-SA")}°</bdi></p>
-            <p className="font-sans text-sm text-muted-foreground">اتجاه القبلة من الشمال</p>
-            {!hasHeading && !orientationError && !needsPermission && <p role="status" className="text-sm text-muted-foreground">بانتظار قراءة البوصلة...</p>}
+            <p className="font-sans text-sm text-muted-foreground">{tr("اتجاه القبلة من الشمال")}</p>
+            {!hasHeading && !orientationError && !needsPermission && <p role="status" className="text-sm text-muted-foreground">{tr("بانتظار قراءة البوصلة...")}</p>}
           </div>
-          <p className="border-t border-border pt-4 text-center font-sans text-xs text-muted-foreground leading-relaxed">للحصول على أفضل دقة، أمسك الجهاز أفقياً وابتعد عن المعادن والأجهزة الإلكترونية</p>
+          <p className="border-t border-border pt-4 text-center font-sans text-xs text-muted-foreground leading-relaxed">{tr("للحصول على أفضل دقة، أمسك الجهاز أفقياً وابتعد عن المعادن والأجهزة الإلكترونية")}</p>
         </>
       )}
     </div>

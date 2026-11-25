@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { FeatureUnlock } from "@/quran/components/feature-unlock";
 import { useState, useEffect } from "react";
 import { Link } from "@/quran/wouter-shim";
@@ -59,6 +60,7 @@ export default function PrayerTimes() {
 }
 
 function PrayerTimesContent() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [times, setTimes] = useState<PrayerTimes | null>(null);
   const [city, setCity] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -100,18 +102,18 @@ function PrayerTimesContent() {
             );
             const geoData = await geoRes.json();
             const addr = geoData.address;
-            setCity(addr.city || addr.town || addr.village || addr.county || "موقعك");
+            setCity(addr.city || addr.town || addr.village || addr.county || tr("موقعك"));
           } catch {
-            setCity("موقعك");
+            setCity(tr("موقعك"));
           }
         } catch {
-          setError("تعذّر تحميل أوقات الصلاة. يرجى المحاولة لاحقاً.");
+          setError(tr("تعذّر تحميل أوقات الصلاة. يرجى المحاولة لاحقاً."));
         } finally {
           setLoading(false);
         }
       },
       () => {
-        setError("يرجى السماح بالوصول إلى الموقع الجغرافي لعرض أوقات الصلاة.");
+        setError(tr("يرجى السماح بالوصول إلى الموقع الجغرافي لعرض أوقات الصلاة."));
         setLoading(false);
       }
     );
@@ -120,13 +122,13 @@ function PrayerTimesContent() {
   const nextPrayer = times ? getNextPrayer(times) : null;
 
   return (
-    <div className="max-w-md mx-auto space-y-6 pb-10" dir="rtl">
+    <div className="max-w-md mx-auto space-y-6 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="font-serif text-2xl text-primary font-bold">أوقات الصلاة</h1>
+          <h1 className="font-serif text-2xl text-primary font-bold">{tr("أوقات الصلاة")}</h1>
           {city && <p className="font-sans text-xs text-muted-foreground">{city} — {date}</p>}
         </div>
       </div>
@@ -134,7 +136,7 @@ function PrayerTimesContent() {
       {loading && (
         <div className="text-center py-16 space-y-3">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" style={{ borderWidth: 3 }} />
-          <p className="font-sans text-muted-foreground text-sm">جارٍ تحديد الموقع وجلب الأوقات...</p>
+          <p className="font-sans text-muted-foreground text-sm">{tr("جارٍ تحديد الموقع وجلب الأوقات...")}</p>
         </div>
       )}
 
@@ -146,9 +148,9 @@ function PrayerTimesContent() {
 
       {nextPrayer && (
         <div className="bg-primary text-primary-foreground rounded-3xl p-6 text-center space-y-1 shadow-lg">
-          <p className="font-sans text-sm opacity-80">الصلاة القادمة</p>
+          <p className="font-sans text-sm opacity-80">{tr("الصلاة القادمة")}</p>
           <p className="font-serif text-4xl font-bold">{nextPrayer.name}</p>
-          <p className="font-sans text-sm opacity-80">بعد {formatCountdown(nextPrayer.minutesLeft)}</p>
+          <p className="font-sans text-sm opacity-80">{tr("بعد")}{formatCountdown(nextPrayer.minutesLeft)}</p>
         </div>
       )}
 
@@ -191,8 +193,7 @@ function PrayerTimesContent() {
 
       {times && (
         <p className="font-sans text-xs text-center text-muted-foreground">
-          الأوقات وفق طريقة أم القرى
-        </p>
+          {tr("الأوقات وفق طريقة أم القرى")}</p>
       )}
     </div>
   );

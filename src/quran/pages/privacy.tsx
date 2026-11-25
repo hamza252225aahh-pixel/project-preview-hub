@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, ExternalLink } from "lucide-react";
 
@@ -18,13 +19,14 @@ const sections: { title: string; body: string[] }[] = [
 const PRIVACY_WEB_URL = "https://github-project-peek.lovable.app/privacy-policy.html";
 
 export default function Privacy() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   return (
-    <div className="mx-auto max-w-xl space-y-4 py-4" dir="rtl">
+    <div className="mx-auto max-w-xl space-y-4 py-4" dir={uiDir}>
       <div className="flex items-center gap-2">
-        <Link href="/" className="p-2 text-foreground" aria-label="العودة">
+        <Link href="/" className="p-2 text-foreground" aria-label={tr("العودة")}>
           <ChevronRight />
         </Link>
-        <h1 className="text-2xl font-bold text-foreground">سياسة الخصوصية</h1>
+        <h1 className="text-2xl font-bold text-foreground">{tr("سياسة الخصوصية")}</h1>
       </div>
       <p className="text-sm text-muted-foreground">آخر تحديث: أكتوبر 2026</p>
       

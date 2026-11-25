@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState } from "react";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, ChevronDown, Heart } from "lucide-react";
@@ -151,17 +152,18 @@ const fadl = [
 ];
 
 function FadlCard({ title, items }: { title: string; items: { text: string; source: string }[] }) {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [open, setOpen] = useState(false);
   return (
     <div className="border border-primary/40 rounded-2xl overflow-hidden shadow-sm bg-primary/5">
-      <button className="w-full flex items-center justify-between px-5 py-4" onClick={() => setOpen((o) => !o)} dir="rtl">
+      <button className="w-full flex items-center justify-between px-5 py-4" onClick={() => setOpen((o) => !o)} dir={uiDir}>
         <span className="font-serif text-primary font-bold text-[28px]">{title}</span>
         <ChevronDown className={`w-5 h-5 text-primary transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
         <div className="divide-y divide-border bg-background">
           {items.map((f, i) => (
-            <div key={i} className="p-5 space-y-2" dir="rtl">
+            <div key={i} className="p-5 space-y-2" dir={uiDir}>
               <p className="quran-text text-foreground text-[22px] font-semibold">{f.text}</p>
               <p className="font-sans text-muted-foreground text-[15px]">{f.source}</p>
             </div>
@@ -173,13 +175,14 @@ function FadlCard({ title, items }: { title: string; items: { text: string; sour
 }
 
 function CategoryCard({ cat }: { cat: Category }) {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [open, setOpen] = useState(false);
   return (
     <div className="border border-border rounded-2xl overflow-hidden shadow-sm" data-testid={`cat-${cat.label}`}>
       <button
         className="w-full flex items-center justify-between px-5 py-4 bg-card hover:bg-primary/5 transition-colors"
         onClick={() => setOpen((o) => !o)}
-        dir="rtl"
+        dir={uiDir}
       >
         <span className="font-serif text-primary font-bold text-[28px]">{cat.label}</span>
         <div className="flex items-center gap-2">
@@ -190,14 +193,14 @@ function CategoryCard({ cat }: { cat: Category }) {
       {open && (
         <div className="divide-y divide-border">
           {cat.duas.map((dua) => (
-            <div key={dua.id} className="p-5 space-y-3 bg-background" data-testid={`card-dua-${dua.id}`} dir="rtl">
+            <div key={dua.id} className="p-5 space-y-3 bg-background" data-testid={`card-dua-${dua.id}`} dir={uiDir}>
               <div className="flex items-start justify-between gap-3">
                 <h3 className="font-serif text-primary font-bold text-[18px]">{dua.title}</h3>
                 <FavoriteButton item={{ key: `dua-${dua.id}`, type: "dua", title: dua.title, text: dua.text, source: dua.source }} />
               </div>
               <p className="quran-text text-foreground text-[26px] font-semibold">{dua.text}</p>
               {dua.source && (
-                <p className="font-sans text-muted-foreground text-[16px] font-medium">المصدر: {dua.source}</p>
+                <p className="font-sans text-muted-foreground text-[16px] font-medium">{tr("المصدر:")}{dua.source}</p>
               )}
             </div>
           ))}
@@ -208,13 +211,14 @@ function CategoryCard({ cat }: { cat: Category }) {
 }
 
 function StandaloneDuaCard({ dua }: { dua: Dua }) {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [open, setOpen] = useState(false);
   return (
     <div className="border border-primary/40 rounded-2xl overflow-hidden shadow-sm bg-primary/5" data-testid={`card-dua-${dua.id}`}>
       <button
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-primary/5 transition-colors"
         onClick={() => setOpen((o) => !o)}
-        dir="rtl"
+        dir={uiDir}
       >
         <span className="font-serif text-primary font-bold text-[28px]">{dua.title}</span>
         <div className="flex items-center gap-1">
@@ -223,10 +227,10 @@ function StandaloneDuaCard({ dua }: { dua: Dua }) {
         </div>
       </button>
       {open && (
-        <div className="p-5 space-y-3 bg-background" dir="rtl">
+        <div className="p-5 space-y-3 bg-background" dir={uiDir}>
           <p className="quran-text text-foreground text-[26px] font-semibold">{dua.text}</p>
           {dua.source && (
-            <p className="font-sans text-muted-foreground text-[16px] font-medium">المصدر: {dua.source}</p>
+            <p className="font-sans text-muted-foreground text-[16px] font-medium">{tr("المصدر:")}{dua.source}</p>
           )}
         </div>
       )}
@@ -235,23 +239,24 @@ function StandaloneDuaCard({ dua }: { dua: Dua }) {
 }
 
 export default function Duas() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const total = categories.reduce((s, c) => s + c.duas.length, 0) + standaloneDuas.length;
   return (
-    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div className="flex-1">
-          <h1 className="font-serif text-primary font-bold text-[34px]">الدعاء</h1>
+          <h1 className="font-serif text-primary font-bold text-[34px]">{tr("الدعاء")}</h1>
           <p className="font-sans text-muted-foreground text-[14px]">{total} دعاء في {categories.length + standaloneDuas.length} قسمًا</p>
         </div>
-        <Link href="/favorites?type=dua" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-favorites" aria-label="المفضلة">
+        <Link href="/favorites?type=dua" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-favorites" aria-label={tr("المفضلة")}>
           <Heart className="w-6 h-6" />
         </Link>
       </div>
       <div className="space-y-3">
-        <FadlCard title="فضل الدعاء" items={fadl} />
+        <FadlCard title={tr("فضل الدعاء")} items={fadl} />
         {categories.map((cat) => <CategoryCard key={cat.label} cat={cat} />)}
         {standaloneDuas.map((dua) => <StandaloneDuaCard key={dua.id} dua={dua} />)}
       </div>

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useEffect, useState } from "react";
 import { AlertCircle, Check, Download, Loader2, Trash2, X } from "lucide-react";
 import {
@@ -18,6 +19,7 @@ export function OfflineDownloadButton({
   number: number;
   showLabel?: boolean;
 }) {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [status, setStatus] = useState<DownloadStatus>("checking");
   const [progress, setProgress] = useState<number | null>(null);
   const [displayProgress, setDisplayProgress] = useState(0);
@@ -99,7 +101,7 @@ export function OfflineDownloadButton({
     event.preventDefault();
     event.stopPropagation();
     const shouldCancel = window.confirm(
-      "السورة قيد التحميل الآن.\nهل تريد إلغاء التحميل؟\nاضغط «موافق» للإلغاء أو «إلغاء» لمتابعة التحميل.",
+      tr("السورة قيد التحميل الآن.\nهل تريد إلغاء التحميل؟\nاضغط «موافق» للإلغاء أو «إلغاء» لمتابعة التحميل."),
     );
     if (shouldCancel) {
       controller?.abort();
@@ -110,31 +112,31 @@ export function OfflineDownloadButton({
   }
 
   const label = status === "downloaded"
-    ? "محفوظ بدون إنترنت"
+    ? tr("محفوظ بدون إنترنت")
     : status === "downloading"
-      ? progress === null ? "جارٍ التحميل" : `جارٍ التحميل ${progress}%`
+      ? progress === null ? tr("جارٍ التحميل") : tr("جارٍ التحميل {0}%", progress)
       : status === "error"
-        ? "إعادة المحاولة"
-        : "تحميل بدون إنترنت";
+        ? tr("إعادة المحاولة")
+        : tr("تحميل بدون إنترنت");
 
   if (status === "downloaded") {
     return (
       <div className="flex items-center justify-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
         <span
           className={`${showLabel ? "px-2 py-1.5 text-xs font-sans" : "w-8 h-8"} flex items-center justify-center rounded-full text-primary bg-primary/10`}
-          aria-label="السورة محفوظة بدون إنترنت"
-          title="السورة محفوظة بدون إنترنت"
+          aria-label={tr("السورة محفوظة بدون إنترنت")}
+          title={tr("السورة محفوظة بدون إنترنت")}
           data-testid={`icon-downloaded-${type}-${number}`}
         >
           <Check className="w-4 h-4" />
-          {showLabel && <span className="mr-1">محفوظة دون إنترنت</span>}
+          {showLabel && <span className="mr-1">{tr("محفوظة دون إنترنت")}</span>}
         </span>
         <button
           type="button"
           onClick={handleClick}
           className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground border border-border hover:text-destructive hover:border-destructive/45 transition-colors"
-          aria-label="حذف السورة من التحميلات"
-          title="حذف السورة من التحميلات"
+          aria-label={tr("حذف السورة من التحميلات")}
+          title={tr("حذف السورة من التحميلات")}
           data-testid={`btn-delete-download-${type}-${number}`}
         >
           <Trash2 className="w-4 h-4" />
@@ -188,8 +190,8 @@ export function OfflineDownloadButton({
           type="button"
           onClick={handleCancelClick}
           className="w-6 h-6 flex items-center justify-center rounded-full text-muted-foreground border border-border hover:text-destructive hover:border-destructive/45 transition-colors"
-          aria-label="إلغاء التحميل"
-          title="إلغاء التحميل"
+          aria-label={tr("إلغاء التحميل")}
+          title={tr("إلغاء التحميل")}
           data-testid={`btn-cancel-download-${type}-${number}`}
         >
           <X className="w-3.5 h-3.5" />

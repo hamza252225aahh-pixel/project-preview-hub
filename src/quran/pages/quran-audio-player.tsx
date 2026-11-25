@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useSearch } from "@/quran/wouter-shim";
 import { ChevronRight, Play, Pause, RotateCcw, RotateCw, SkipBack, SkipForward, Heart, Shuffle, Repeat1 } from "lucide-react";
@@ -17,6 +18,7 @@ let _autoPlayOnMount = false;
 let _playMode: "off" | "auto" | "shuffle" | "repeat" = "auto";
 
 export default function QuranAudioPlayer() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [location, setLocation] = useLocation();
   const number = parseInt(location.split("/").pop() || "1");
   const { surahs } = useSurahList();
@@ -197,14 +199,14 @@ export default function QuranAudioPlayer() {
   }
 
   return (
-    <div className="max-w-lg mx-auto space-y-6 pb-10 pt-2" dir="rtl">
+    <div className="max-w-lg mx-auto space-y-6 pb-10 pt-2" dir={uiDir}>
       {/* back */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/quran-audio" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-list">
             <ChevronRight className="w-6 h-6" />
           </Link>
-          <p className="text-muted-foreground text-sm font-sans">قائمة السور</p>
+          <p className="text-muted-foreground text-sm font-sans">{tr("قائمة السور")}</p>
         </div>
         {/* favourite */}
         <div className="flex items-center gap-2">
@@ -218,7 +220,7 @@ export default function QuranAudioPlayer() {
             }`}
             data-testid="btn-fav-player">
             <Heart className="w-4 h-4" fill={isFavorite(number) ? "currentColor" : "none"} />
-            {isFavorite(number) ? "في المفضلة" : "أضف للمفضلة"}
+            {isFavorite(number) ? tr("في المفضلة") : tr("أضف للمفضلة")}
           </button>
         </div>
       </div>
@@ -229,21 +231,21 @@ export default function QuranAudioPlayer() {
             <h1 className="font-serif text-5xl text-primary">{surah.name}</h1>
             <p className="font-sans text-muted-foreground">{surah.englishName} — {surah.englishNameTranslation}</p>
             <p className="font-sans text-xs text-muted-foreground">
-              {surah.numberOfAyahs} آية — {surah.revelationType === "Meccan" ? "مكية" : "مدنية"}
+              {surah.numberOfAyahs} آية — {surah.revelationType === "Meccan" ? tr("مكية") : tr("مدنية")}
             </p>
           </>
         ) : <Skeleton className="h-12 w-48 mx-auto" />}
       </div>
       {targetAyah && (
         <div className="space-y-3 border-y border-border py-4 text-center">
-          <p className="font-serif text-xl text-primary">الآية {targetAyah}</p>
-          <p className="text-xs text-muted-foreground">تلاوة الآية تتطلب اتصالاً بالإنترنت</p>
+          <p className="font-serif text-xl text-primary">{tr("الآية")}{targetAyah}</p>
+          <p className="text-xs text-muted-foreground">{tr("تلاوة الآية تتطلب اتصالاً بالإنترنت")}</p>
           <Button asChild variant="outline" size="sm">
-            <RouterLink to="/quran-audio/$number" params={{ number: String(number) }} search={{}}>استماع للسورة كاملة</RouterLink>
+            <RouterLink to="/quran-audio/$number" params={{ number: String(number) }} search={{}}>{tr("استماع للسورة كاملة")}</RouterLink>
           </Button>
         </div>
       )}
-      {audioError && <p role="alert" className="text-center text-sm text-foreground">تعذر تشغيل التلاوة. تحقق من الاتصال وحاول مجدداً.</p>}
+      {audioError && <p role="alert" className="text-center text-sm text-foreground">{tr("تعذر تشغيل التلاوة. تحقق من الاتصال وحاول مجدداً.")}</p>}
       {/* player card */}
       <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm pt-[24px] pb-[24px] pl-[24px] pr-[24px] mb-[400px] mt-[0px] ml-[0px] mr-[0px] text-left">
         {/* seek bar */}
@@ -262,12 +264,12 @@ export default function QuranAudioPlayer() {
 
         {/* central control cluster */}
         <div className="flex items-center justify-center gap-3 sm:gap-5" dir="ltr">
-          <button onClick={goPrev} disabled={!prevNum} aria-label="السورة السابقة"
+          <button onClick={goPrev} disabled={!prevNum} aria-label={tr("السورة السابقة")}
             className="w-10 h-10 rounded-full border border-primary/25 bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-30 transition-all"
             data-testid="button-prev-surah">
             <SkipBack className="w-5 h-5 mx-auto" />
           </button>
-          <button onClick={() => seekBy(10)} aria-label="تقديم 10 ثوانٍ"
+          <button onClick={() => seekBy(10)} aria-label={tr("تقديم 10 ثوانٍ")}
             className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/85 transition-all"
             data-testid="button-seek-backward">
             <span className="relative block">
@@ -275,7 +277,7 @@ export default function QuranAudioPlayer() {
               <span className="absolute inset-0 flex items-center justify-center text-primary-foreground text-[10px] font-normal">10</span>
             </span>
           </button>
-          <button onClick={togglePlay} aria-label={playing ? "إيقاف التلاوة مؤقتاً" : "تشغيل التلاوة"}
+          <button onClick={togglePlay} aria-label={playing ? tr("إيقاف التلاوة مؤقتاً") : tr("تشغيل التلاوة")}
             className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-all active:scale-95"
             data-testid="button-play-pause">
             {buffering
@@ -285,7 +287,7 @@ export default function QuranAudioPlayer() {
                 : <Play className="w-8 h-8 mr-[-3px]" />
             }
           </button>
-          <button onClick={() => seekBy(-10)} aria-label="تأخير 10 ثوانٍ"
+          <button onClick={() => seekBy(-10)} aria-label={tr("تأخير 10 ثوانٍ")}
             className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/85 transition-all"
             data-testid="button-seek-forward">
             <span className="relative block">
@@ -293,7 +295,7 @@ export default function QuranAudioPlayer() {
               <span className="absolute inset-0 flex items-center justify-center text-[10px] font-normal text-primary-foreground">10</span>
             </span>
           </button>
-          <button onClick={goNext} disabled={!nextNum} aria-label="السورة التالية"
+          <button onClick={goNext} disabled={!nextNum} aria-label={tr("السورة التالية")}
             className="w-10 h-10 rounded-full border border-primary/25 bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-30 transition-all"
             data-testid="button-next-surah">
             <SkipForward className="w-5 h-5 mx-auto" />
@@ -305,8 +307,7 @@ export default function QuranAudioPlayer() {
           <button onClick={() => {
             if (audioRef.current) { audioRef.current.currentTime = 0; setCurrentTime(0); }
           }} className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors" data-testid="button-restart">
-            <RotateCcw className="w-4 h-4" /> إعادة
-          </button>
+            <RotateCcw className="w-4 h-4" /> {tr("إعادة")}</button>
           {prevSurah && <button onClick={goPrev} className="text-primary hover:underline">{prevSurah.name}</button>}
           {nextSurah && <button onClick={goNext} className="text-primary hover:underline">{nextSurah.name}</button>}
         </div>
@@ -315,11 +316,11 @@ export default function QuranAudioPlayer() {
         <div className="flex items-center justify-center gap-2 pt-4 border-t border-border">
           <select value={playMode} onChange={(e) => setPlayMode(e.target.value as typeof playMode)}
             className="bg-background border border-border rounded-xl px-3 py-2 text-xs font-sans text-foreground outline-none focus:ring-2 focus:ring-primary/30"
-            aria-label="خاصية التشغيل التلقائي" data-testid="select-play-mode">
-            <option value="auto">التشغيل التلقائي</option>
-            <option value="shuffle">التشغيل العشوائي</option>
-            <option value="repeat">تكرار السورة</option>
-            <option value="off">إيقاف التشغيل التلقائي</option>
+            aria-label={tr("خاصية التشغيل التلقائي")} data-testid="select-play-mode">
+            <option value="auto">{tr("التشغيل التلقائي")}</option>
+            <option value="shuffle">{tr("التشغيل العشوائي")}</option>
+            <option value="repeat">{tr("تكرار السورة")}</option>
+            <option value="off">{tr("إيقاف التشغيل التلقائي")}</option>
           </select>
           {playMode === "shuffle" ? <Shuffle className="w-4 h-4 text-primary" /> : playMode === "repeat" ? <Repeat1 className="w-4 h-4 text-primary" /> : <RotateCw className={`w-4 h-4 ${playMode === "auto" ? "text-primary" : "text-muted-foreground"}`} />}
         </div>
@@ -334,8 +335,7 @@ export default function QuranAudioPlayer() {
         onError={() => { if (!audioRef.current?.getAttribute("src")) return; setAudioError(true); setBuffering(false); setPlaying(false); }}
         preload="none" />
       <p className="font-sans text-xs text-center text-muted-foreground">
-        تلاوة الشيخ محمد صديق المنشاوي — رحمه الله
-      </p>
+        {tr("تلاوة الشيخ محمد صديق المنشاوي — رحمه الله")}</p>
     </div>
   );
 }

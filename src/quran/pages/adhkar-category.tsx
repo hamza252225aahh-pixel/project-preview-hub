@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { Link, useParams } from "@/quran/wouter-shim";
 import { ChevronRight } from "lucide-react";
 import { FavoriteButton } from "@/quran/components/FavoriteButton";
@@ -166,21 +167,22 @@ const adhkarData: Record<string, CategoryData> = {
 };
 
 export default function AdhkarCategory() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const params = useParams<{ category: string }>();
   const category = params.category || "";
   const data = adhkarData[category];
 
   if (!data) {
     return (
-      <div className="max-w-2xl mx-auto space-y-6 pb-10 pt-2 text-center" dir="rtl">
-        <Link href="/adhkar" className="text-primary hover:underline font-sans">العودة للأذكار</Link>
-        <p className="font-serif text-muted-foreground text-xl mt-8">لم يُعثر على هذا القسم</p>
+      <div className="max-w-2xl mx-auto space-y-6 pb-10 pt-2 text-center" dir={uiDir}>
+        <Link href="/adhkar" className="text-primary hover:underline font-sans">{tr("العودة للأذكار")}</Link>
+        <p className="font-serif text-muted-foreground text-xl mt-8">{tr("لم يُعثر على هذا القسم")}</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-6 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/adhkar" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-adhkar">
           <ChevronRight className="w-6 h-6" />
@@ -200,8 +202,7 @@ export default function AdhkarCategory() {
               <div className="flex items-center gap-1">
                 {item.count > 1 && (
                   <span className="font-sans text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary">
-                    {item.count} مرة
-                  </span>
+                    {item.count} {tr("مرة")}</span>
                 )}
                 <FavoriteButton
                   item={{

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState } from "react";
 import { Link, useSearch } from "@/quran/wouter-shim";
 import { ChevronRight, Heart, Trash2 } from "lucide-react";
@@ -12,6 +13,7 @@ const typeLabels: Record<FavoriteType, string> = {
 const typeOrder: FavoriteType[] = ["dua", "dhikr", "tasbeeh"];
 
 export default function Favorites() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [items, setItems] = useState<FavoriteItem[]>(loadFavorites);
 
   function remove(key: string) {
@@ -30,24 +32,23 @@ export default function Favorites() {
     .filter((g) => g.items.length > 0);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href={backHref} className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="font-serif text-primary font-bold text-[34px]">{activeType ? `مفضلة ${typeLabels[activeType]}` : "المفضلة"}</h1>
-          <p className="font-sans text-muted-foreground text-[14px]">{visible.length} عنصر محفوظ</p>
+          <h1 className="font-serif text-primary font-bold text-[34px]">{activeType ? tr("مفضلة {0}", typeLabels[activeType]) : tr("المفضلة")}</h1>
+          <p className="font-sans text-muted-foreground text-[14px]">{visible.length} {tr("عنصر محفوظ")}</p>
         </div>
       </div>
 
       {visible.length === 0 && (
         <div className="text-center py-16 space-y-3">
           <Heart className="w-12 h-12 mx-auto text-muted-foreground" />
-          <p className="font-serif text-muted-foreground text-xl">لا توجد عناصر في المفضلة بعد</p>
+          <p className="font-serif text-muted-foreground text-xl">{tr("لا توجد عناصر في المفضلة بعد")}</p>
           <p className="font-sans text-sm text-muted-foreground">
-            اضغط على القلب بجانب أي دعاء أو ذكر أو تسبيحة لحفظها هنا
-          </p>
+            {tr("اضغط على القلب بجانب أي دعاء أو ذكر أو تسبيحة لحفظها هنا")}</p>
         </div>
       )}
 
@@ -64,7 +65,7 @@ export default function Favorites() {
                 <h3 className="font-serif text-primary font-bold text-[18px]">{item.title}</h3>
                 <button
                   type="button"
-                  aria-label="إزالة من المفضلة"
+                  aria-label={tr("إزالة من المفضلة")}
                   data-testid={`button-remove-favorite-${item.key}`}
                   onClick={() => remove(item.key)}
                   className="p-2 rounded-full text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
@@ -74,7 +75,7 @@ export default function Favorites() {
               </div>
               <p className="quran-text text-foreground text-[24px] font-semibold">{item.text}</p>
               {item.source && (
-                <p className="font-sans text-muted-foreground text-[15px] font-medium">المصدر: {item.source}</p>
+                <p className="font-sans text-muted-foreground text-[15px] font-medium">{tr("المصدر:")}{item.source}</p>
               )}
             </div>
           ))}

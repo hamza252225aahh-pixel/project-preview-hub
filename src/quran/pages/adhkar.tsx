@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, ChevronLeft, Heart } from "lucide-react";
 
@@ -21,14 +22,15 @@ const categories = [
 ];
 
 export default function Adhkar() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-6 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home">
           <ChevronRight className="w-6 h-6" />
         </Link>
-        <h1 className="font-serif text-primary font-bold text-[38px] flex-1">الأذكار</h1>
-        <Link href="/favorites?type=dhikr" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-favorites" aria-label="المفضلة">
+        <h1 className="font-serif text-primary font-bold text-[38px] flex-1">{tr("الأذكار")}</h1>
+        <Link href="/favorites?type=dhikr" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-favorites" aria-label={tr("المفضلة")}>
           <Heart className="w-6 h-6" />
         </Link>
       </div>

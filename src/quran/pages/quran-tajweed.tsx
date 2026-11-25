@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState } from "react";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, Heart, Download, Check, Loader2 } from "lucide-react";
@@ -8,6 +9,7 @@ import { OfflineDownloadButton } from "@/quran/components/offline-download-butto
 import { downloadAllRecitations } from "@/quran/lib/offline-audio";
 
 export default function QuranTajweed() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const { surahs, loading, error } = useSurahList();
   const { isFavorite, toggle } = useFavorites();
   const [tab, setTab] = useState<"all" | "favorites">("all");
@@ -22,7 +24,7 @@ export default function QuranTajweed() {
   async function downloadAll() {
     if (allDownload === "downloading") {
       const shouldCancel = window.confirm(
-        "تحميل جميع السور قيد التنفيذ.\nهل تريد إلغاء التحميل؟\nاضغط «موافق» للإلغاء أو «إلغاء» لمتابعة التحميل.",
+        tr("تحميل جميع السور قيد التنفيذ.\nهل تريد إلغاء التحميل؟\nاضغط «موافق» للإلغاء أو «إلغاء» لمتابعة التحميل."),
       );
       if (shouldCancel) {
         allController?.abort();
@@ -55,14 +57,14 @@ export default function QuranTajweed() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="font-serif text-2xl text-primary font-bold">القرآن الكريم المجوّد</h1>
-          <p className="text-muted-foreground text-sm font-sans">بصوت الشيخ محمد صديق المنشاوي</p>
+          <h1 className="font-serif text-2xl text-primary font-bold">{tr("القرآن الكريم المجوّد")}</h1>
+          <p className="text-muted-foreground text-sm font-sans">{tr("بصوت الشيخ محمد صديق المنشاوي")}</p>
         </div>
       </div>
 
@@ -73,12 +75,12 @@ export default function QuranTajweed() {
         data-testid="button-download-all-tajweed-surahs"
       >
         {allDownload === "downloading"
-          ? <><Loader2 className="w-4 h-4 animate-spin" /> جارٍ تحميل السور {allProgress}%</>
+          ? <><Loader2 className="w-4 h-4 animate-spin" /> {tr("جارٍ تحميل السور")}{allProgress}%</>
           : allDownload === "done"
-            ? <><Check className="w-4 h-4" /> تم تحميل السور بالكامل</>
+            ? <><Check className="w-4 h-4" /> {tr("تم تحميل السور بالكامل")}</>
             : allDownload === "error"
-              ? <><Download className="w-4 h-4" /> إعادة تحميل السور</>
-              : <><Download className="w-4 h-4" /> تحميل السور بالكامل للعمل دون إنترنت</>}
+              ? <><Download className="w-4 h-4" /> {tr("إعادة تحميل السور")}</>
+              : <><Download className="w-4 h-4" /> {tr("تحميل السور بالكامل للعمل دون إنترنت")}</>}
       </button>
 
       <div className="flex gap-2 bg-muted rounded-2xl p-1">
@@ -86,28 +88,25 @@ export default function QuranTajweed() {
           className={`flex-1 py-2.5 rounded-xl font-serif text-sm font-bold transition-all ${
             tab === "all" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
           }`}>
-          كل السور
-        </button>
+          {tr("كل السور")}</button>
         <button onClick={() => setTab("favorites")}
           className={`flex-1 py-2.5 rounded-xl font-serif text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
             tab === "favorites" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground"
           }`}>
           <Heart className="w-3.5 h-3.5" />
-          المفضلة
-        </button>
+          {tr("المفضلة")}</button>
       </div>
 
       {error && (
         <div className="p-4 bg-red-50 text-red-700 rounded-xl text-center font-sans text-sm">
-          تعذّر تحميل قائمة السور.
-        </div>
+          {tr("تعذّر تحميل قائمة السور.")}</div>
       )}
 
       {tab === "favorites" && !loading && displayed.length === 0 && (
         <div className="text-center py-12 space-y-2">
           <Heart className="w-10 h-10 text-muted-foreground mx-auto opacity-40" />
-          <p className="font-serif text-lg text-muted-foreground">لا توجد سور في المفضلة</p>
-          <p className="font-sans text-sm text-muted-foreground">اضغط على القلب بجانب أي سورة لإضافتها</p>
+          <p className="font-serif text-lg text-muted-foreground">{tr("لا توجد سور في المفضلة")}</p>
+          <p className="font-sans text-sm text-muted-foreground">{tr("اضغط على القلب بجانب أي سورة لإضافتها")}</p>
         </div>
       )}
 
@@ -130,7 +129,7 @@ export default function QuranTajweed() {
                   className={`p-3 pl-4 transition-colors flex-shrink-0 ${
                     isFavorite(surah.number) ? "text-rose-500" : "text-border hover:text-rose-400"
                   }`}
-                  title={isFavorite(surah.number) ? "إزالة من المفضلة" : "إضافة للمفضلة"}>
+                  title={isFavorite(surah.number) ? tr("إزالة من المفضلة") : tr("إضافة للمفضلة")}>
                   <Heart className="w-4 h-4" fill={isFavorite(surah.number) ? "currentColor" : "none"} />
                 </button>
                  <OfflineDownloadButton type="tajweed" number={surah.number} />
@@ -145,8 +144,7 @@ export default function QuranTajweed() {
                   </div>
                   <div className="flex-shrink-0">
                     <span className="font-sans text-xs text-muted-foreground px-2 py-1 rounded-full bg-muted">
-                      {surah.numberOfAyahs} آية
-                    </span>
+                      {surah.numberOfAyahs} {tr("آية")}</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 rotate-180" />
                 </Link>

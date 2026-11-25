@@ -16,6 +16,7 @@ import { Layout } from "../quran/components/layout";
 import { Toaster } from "../quran/components/ui/toaster";
 import { TooltipProvider } from "../quran/components/ui/tooltip";
 import { StartupScreen } from "../quran/components/startup-screen";
+import { LanguageProvider } from "../quran/components/language-provider";
 
 function NotFoundComponent() {
   return (
@@ -134,6 +135,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
       <TooltipProvider>
         <Layout>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
@@ -141,6 +143,7 @@ function RootComponent() {
         </Layout>
         <Toaster />
       </TooltipProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

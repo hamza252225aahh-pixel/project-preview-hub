@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { Link, useLocation } from "@tanstack/react-router";
 import type { MouseEvent, SVGProps } from "react";
 import { Bell, Search, type LucideIcon } from "lucide-react";
@@ -30,9 +31,10 @@ function playTapAnimation(event: MouseEvent<HTMLAnchorElement>) {
 }
 
 export function BottomNavigation() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const pathname = useLocation({ select: (location) => location.pathname });
   return (
-    <nav className="bottom-navigation" aria-label="التنقل السفلي" dir="rtl">
+    <nav className="bottom-navigation" aria-label={tr("التنقل السفلي")} dir={uiDir}>
       <div className="bottom-navigation-pill">
         {items.map(({ to, label, icon: Icon, tone }) => {
           const active = to === "/" ? pathname === to : pathname === to || pathname.startsWith(`${to}/`);

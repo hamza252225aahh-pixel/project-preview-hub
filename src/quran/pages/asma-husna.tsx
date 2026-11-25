@@ -1,9 +1,11 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState } from "react";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight } from "lucide-react";
 import { ASMA_HUSNA } from "@/quran/data/asmaHusna";
 
 export default function AsmaHusna() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [search, setSearch] = useState("");
 
@@ -17,15 +19,15 @@ export default function AsmaHusna() {
     : ASMA_HUSNA;
 
   return (
-    <div className="space-y-4 pb-10" dir="rtl">
+    <div className="space-y-4 pb-10" dir={uiDir}>
       {/* header */}
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="font-serif text-2xl text-primary font-bold">أسماء الله الحسنى</h1>
-          <p className="text-muted-foreground text-sm font-sans">٩٩ اسماً عظيماً مع الشرح والمعنى</p>
+          <h1 className="font-serif text-2xl text-primary font-bold">{tr("أسماء الله الحسنى")}</h1>
+          <p className="text-muted-foreground text-sm font-sans">{tr("٩٩ اسماً عظيماً مع الشرح والمعنى")}</p>
         </div>
       </div>
       {/* header card */}
@@ -33,24 +35,23 @@ export default function AsmaHusna() {
         <p className="quran-text text-primary text-lg leading-loose">
           وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا
         </p>
-        <p className="font-sans text-xs text-muted-foreground mt-1">سورة الأعراف — ١٨٠</p>
+        <p className="font-sans text-xs text-muted-foreground mt-1">{tr("سورة الأعراف — ١٨٠")}</p>
       </div>
       {/* search */}
       <div className="relative">
         <input
           type="search"
-          placeholder="ابحث عن اسم…"
+          placeholder={tr("ابحث عن اسم…")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pr-4 pl-4 h-12 rounded-2xl bg-card border border-border focus:outline-none focus:ring-2 focus:ring-primary font-serif text-lg"
-          dir="rtl"
+          dir={uiDir}
         />
       </div>
       {/* count badge */}
       {!search && (
         <p className="font-sans text-xs text-center text-muted-foreground">
-          اضغط على أي اسم لعرض شرحه
-        </p>
+          {tr("اضغط على أي اسم لعرض شرحه")}</p>
       )}
       {/* grid of names */}
       <div className="space-y-2">
@@ -101,8 +102,7 @@ export default function AsmaHusna() {
       </div>
       {filtered.length === 0 && (
         <p className="text-center py-8 text-muted-foreground font-serif text-lg">
-          لم يُعثر على نتيجة
-        </p>
+          {tr("لم يُعثر على نتيجة")}</p>
       )}
     </div>
   );

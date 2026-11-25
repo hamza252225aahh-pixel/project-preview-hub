@@ -27,6 +27,8 @@ import { Route as HadithBookRouteImport } from './routes/hadith/$book'
 import { Route as HadithFavoritesRouteImport } from './routes/hadith/favorites'
 import { Route as QuranAudioIndexRouteImport } from './routes/quran-audio/index'
 import { Route as QuranAudioNumberRouteImport } from './routes/quran-audio/$number'
+import { Route as QuranEnglishIndexRouteImport } from './routes/quran-english.index'
+import { Route as QuranEnglishNumberRouteImport } from './routes/quran-english.$number'
 import { Route as QuranTajweedIndexRouteImport } from './routes/quran-tajweed/index'
 import { Route as QuranTajweedNumberRouteImport } from './routes/quran-tajweed/$number'
 import { Route as QuranWrittenIndexRouteImport } from './routes/quran-written/index'
@@ -126,6 +128,16 @@ const QuranAudioNumberRoute = QuranAudioNumberRouteImport.update({
   path: '/quran-audio/$number',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuranEnglishIndexRoute = QuranEnglishIndexRouteImport.update({
+  id: '/quran-english/',
+  path: '/quran-english/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranEnglishNumberRoute = QuranEnglishNumberRouteImport.update({
+  id: '/quran-english/$number',
+  path: '/quran-english/$number',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuranTajweedIndexRoute = QuranTajweedIndexRouteImport.update({
   id: '/quran-tajweed/',
   path: '/quran-tajweed/',
@@ -184,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/hadith/$book': typeof HadithBookRoute
   '/hadith/favorites': typeof HadithFavoritesRoute
   '/quran-audio/$number': typeof QuranAudioNumberRoute
+  '/quran-english/$number': typeof QuranEnglishNumberRoute
   '/quran-tajweed/$number': typeof QuranTajweedNumberRoute
   '/quran-written/$number': typeof QuranWrittenNumberRoute
   '/surah/$number': typeof SurahNumberRoute
@@ -191,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/adhkar/': typeof AdhkarIndexRoute
   '/hadith/': typeof HadithIndexRoute
   '/quran-audio/': typeof QuranAudioIndexRoute
+  '/quran-english/': typeof QuranEnglishIndexRoute
   '/quran-tajweed/': typeof QuranTajweedIndexRoute
   '/quran-written/': typeof QuranWrittenIndexRoute
   '/tafsir/': typeof TafsirIndexRoute
@@ -212,6 +226,7 @@ export interface FileRoutesByTo {
   '/hadith/$book': typeof HadithBookRoute
   '/hadith/favorites': typeof HadithFavoritesRoute
   '/quran-audio/$number': typeof QuranAudioNumberRoute
+  '/quran-english/$number': typeof QuranEnglishNumberRoute
   '/quran-tajweed/$number': typeof QuranTajweedNumberRoute
   '/quran-written/$number': typeof QuranWrittenNumberRoute
   '/surah/$number': typeof SurahNumberRoute
@@ -219,6 +234,7 @@ export interface FileRoutesByTo {
   '/adhkar': typeof AdhkarIndexRoute
   '/hadith': typeof HadithIndexRoute
   '/quran-audio': typeof QuranAudioIndexRoute
+  '/quran-english': typeof QuranEnglishIndexRoute
   '/quran-tajweed': typeof QuranTajweedIndexRoute
   '/quran-written': typeof QuranWrittenIndexRoute
   '/tafsir': typeof TafsirIndexRoute
@@ -241,6 +257,7 @@ export interface FileRoutesById {
   '/hadith/$book': typeof HadithBookRoute
   '/hadith/favorites': typeof HadithFavoritesRoute
   '/quran-audio/$number': typeof QuranAudioNumberRoute
+  '/quran-english/$number': typeof QuranEnglishNumberRoute
   '/quran-tajweed/$number': typeof QuranTajweedNumberRoute
   '/quran-written/$number': typeof QuranWrittenNumberRoute
   '/surah/$number': typeof SurahNumberRoute
@@ -248,6 +265,7 @@ export interface FileRoutesById {
   '/adhkar/': typeof AdhkarIndexRoute
   '/hadith/': typeof HadithIndexRoute
   '/quran-audio/': typeof QuranAudioIndexRoute
+  '/quran-english/': typeof QuranEnglishIndexRoute
   '/quran-tajweed/': typeof QuranTajweedIndexRoute
   '/quran-written/': typeof QuranWrittenIndexRoute
   '/tafsir/': typeof TafsirIndexRoute
@@ -271,6 +289,7 @@ export interface FileRouteTypes {
     | '/hadith/$book'
     | '/hadith/favorites'
     | '/quran-audio/$number'
+    | '/quran-english/$number'
     | '/quran-tajweed/$number'
     | '/quran-written/$number'
     | '/surah/$number'
@@ -278,6 +297,7 @@ export interface FileRouteTypes {
     | '/adhkar/'
     | '/hadith/'
     | '/quran-audio/'
+    | '/quran-english/'
     | '/quran-tajweed/'
     | '/quran-written/'
     | '/tafsir/'
@@ -299,6 +319,7 @@ export interface FileRouteTypes {
     | '/hadith/$book'
     | '/hadith/favorites'
     | '/quran-audio/$number'
+    | '/quran-english/$number'
     | '/quran-tajweed/$number'
     | '/quran-written/$number'
     | '/surah/$number'
@@ -306,6 +327,7 @@ export interface FileRouteTypes {
     | '/adhkar'
     | '/hadith'
     | '/quran-audio'
+    | '/quran-english'
     | '/quran-tajweed'
     | '/quran-written'
     | '/tafsir'
@@ -327,6 +349,7 @@ export interface FileRouteTypes {
     | '/hadith/$book'
     | '/hadith/favorites'
     | '/quran-audio/$number'
+    | '/quran-english/$number'
     | '/quran-tajweed/$number'
     | '/quran-written/$number'
     | '/surah/$number'
@@ -334,6 +357,7 @@ export interface FileRouteTypes {
     | '/adhkar/'
     | '/hadith/'
     | '/quran-audio/'
+    | '/quran-english/'
     | '/quran-tajweed/'
     | '/quran-written/'
     | '/tafsir/'
@@ -356,6 +380,7 @@ export interface RootRouteChildren {
   HadithBookRoute: typeof HadithBookRoute
   HadithFavoritesRoute: typeof HadithFavoritesRoute
   QuranAudioNumberRoute: typeof QuranAudioNumberRoute
+  QuranEnglishNumberRoute: typeof QuranEnglishNumberRoute
   QuranTajweedNumberRoute: typeof QuranTajweedNumberRoute
   QuranWrittenNumberRoute: typeof QuranWrittenNumberRoute
   SurahNumberRoute: typeof SurahNumberRoute
@@ -363,6 +388,7 @@ export interface RootRouteChildren {
   AdhkarIndexRoute: typeof AdhkarIndexRoute
   HadithIndexRoute: typeof HadithIndexRoute
   QuranAudioIndexRoute: typeof QuranAudioIndexRoute
+  QuranEnglishIndexRoute: typeof QuranEnglishIndexRoute
   QuranTajweedIndexRoute: typeof QuranTajweedIndexRoute
   QuranWrittenIndexRoute: typeof QuranWrittenIndexRoute
   TafsirIndexRoute: typeof TafsirIndexRoute
@@ -497,6 +523,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuranAudioNumberRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quran-english/': {
+      id: '/quran-english/'
+      path: '/quran-english'
+      fullPath: '/quran-english/'
+      preLoaderRoute: typeof QuranEnglishIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran-english/$number': {
+      id: '/quran-english/$number'
+      path: '/quran-english/$number'
+      fullPath: '/quran-english/$number'
+      preLoaderRoute: typeof QuranEnglishNumberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quran-tajweed/': {
       id: '/quran-tajweed/'
       path: '/quran-tajweed'
@@ -572,6 +612,7 @@ const rootRouteChildren: RootRouteChildren = {
   HadithBookRoute: HadithBookRoute,
   HadithFavoritesRoute: HadithFavoritesRoute,
   QuranAudioNumberRoute: QuranAudioNumberRoute,
+  QuranEnglishNumberRoute: QuranEnglishNumberRoute,
   QuranTajweedNumberRoute: QuranTajweedNumberRoute,
   QuranWrittenNumberRoute: QuranWrittenNumberRoute,
   SurahNumberRoute: SurahNumberRoute,
@@ -579,6 +620,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdhkarIndexRoute: AdhkarIndexRoute,
   HadithIndexRoute: HadithIndexRoute,
   QuranAudioIndexRoute: QuranAudioIndexRoute,
+  QuranEnglishIndexRoute: QuranEnglishIndexRoute,
   QuranTajweedIndexRoute: QuranTajweedIndexRoute,
   QuranWrittenIndexRoute: QuranWrittenIndexRoute,
   TafsirIndexRoute: TafsirIndexRoute,

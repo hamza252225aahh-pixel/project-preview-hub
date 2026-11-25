@@ -1,13 +1,15 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { Heart } from "lucide-react";
 import { useDhikrFavorites, type FavoriteItem } from "@/quran/hooks/useDhikrFavorites";
 
 export function FavoriteButton({ item, className = "" }: { item: FavoriteItem; className?: string }) {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const { isFavorite, toggle } = useDhikrFavorites();
   const active = isFavorite(item.key);
   return (
     <button
       type="button"
-      aria-label={active ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
+      aria-label={active ? tr("إزالة من المفضلة") : tr("إضافة إلى المفضلة")}
       data-testid={`button-favorite-${item.key}`}
       onClick={(e) => {
         e.stopPropagation();

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState, useEffect } from "react";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, RotateCcw, Heart } from "lucide-react";
@@ -61,12 +62,12 @@ function RosaryBeads({ count, target }: { count: number; target: number }) {
 
 function TasbeehCounter({ item, count, onIncrement, onReset, onClose }:
   { item: typeof tasbeehList[0]; count: number; onIncrement: () => void; onReset: () => void; onClose: () => void }) {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const done = count >= item.target;
   return (
-    <div className="fixed inset-0 z-[1000] bg-background flex flex-col items-center overflow-y-auto px-6 pb-24 pt-6" dir="rtl">
-      <button onClick={onClose} aria-label="رجوع" className="self-start flex items-center gap-1 px-3 py-2 rounded-full bg-muted text-foreground hover:text-primary mb-4 font-sans text-sm" data-testid="button-close-tasbeeh">
-        <ChevronRight className="w-6 h-6" /> رجوع
-      </button>
+    <div className="fixed inset-0 z-[1000] bg-background flex flex-col items-center overflow-y-auto px-6 pb-24 pt-6" dir={uiDir}>
+      <button onClick={onClose} aria-label={tr("رجوع")} className="self-start flex items-center gap-1 px-3 py-2 rounded-full bg-muted text-foreground hover:text-primary mb-4 font-sans text-sm" data-testid="button-close-tasbeeh">
+        <ChevronRight className="w-6 h-6" /> {tr("رجوع")}</button>
       <div className="w-full max-w-sm space-y-5 text-center flex flex-col items-center my-auto">
         <p className="font-serif text-primary text-[34px] font-bold">{item.text}</p>
         {item.note && <p className="font-sans text-xs text-muted-foreground">{item.note}</p>}
@@ -77,27 +78,25 @@ function TasbeehCounter({ item, count, onIncrement, onReset, onClose }:
             <span className="font-sans text-4xl font-bold text-primary">{count}</span>
           </div>
         </div>
-        <p className="font-sans text-muted-foreground text-[18px]">الهدف: {item.target}</p>
+        <p className="font-sans text-muted-foreground text-[18px]">{tr("الهدف:")}{item.target}</p>
         <RosaryBeads count={count} target={item.target} />
 
         {done ? (
           <div className="space-y-4">
-            <p className="font-serif text-2xl text-primary animate-pulse">الله يبارك فيك ويجزيك خيراً</p>
+            <p className="font-serif text-2xl text-primary animate-pulse">{tr("الله يبارك فيك ويجزيك خيراً")}</p>
             <button onClick={onReset}
               className="flex items-center gap-2 mx-auto px-6 py-3 rounded-full bg-primary text-primary-foreground font-sans text-sm hover:bg-primary/90 transition-all"
               data-testid="button-reset-tasbeeh">
-              <RotateCcw className="w-4 h-4" />إعادة
-            </button>
+              <RotateCcw className="w-4 h-4" />{tr("إعادة")}</button>
           </div>
         ) : (
           <div className="space-y-3">
             <Button onClick={onIncrement}
-              aria-label={`زيادة عداد ${item.text}`}
+              aria-label={tr("زيادة عداد {0}", item.text)}
               className="w-40 h-40 rounded-full bg-primary text-primary-foreground shadow-xl hover:bg-primary/90 transition-all active:scale-95 mx-auto flex items-center justify-center"
               data-testid="button-increment-tasbeeh" />
             <button onClick={onReset} className="text-muted-foreground hover:text-primary text-xs font-sans flex items-center gap-1 mx-auto" data-testid="button-reset-tasbeeh">
-              <RotateCcw className="w-3 h-3" /> إعادة
-            </button>
+              <RotateCcw className="w-3 h-3" /> {tr("إعادة")}</button>
           </div>
         )}
       </div>
@@ -106,6 +105,7 @@ function TasbeehCounter({ item, count, onIncrement, onReset, onClose }:
 }
 
 export default function Tasbeeh() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [activeId, setActiveId] = useState<number | null>(null);
   const [counts, setCounts] = useState<Record<number, number>>({});
 
@@ -134,16 +134,16 @@ export default function Tasbeeh() {
   const totalCompleted = tasbeehList.filter((t) => (counts[t.id] || 0) >= t.target).length;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-back-home">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div className="flex-1">
-          <h1 className="font-serif text-primary font-bold text-[30px]">التسابيح</h1>
-          <p className="font-sans text-muted-foreground text-[14px] font-bold">{totalCompleted} مكتمل من {tasbeehList.length}</p>
+          <h1 className="font-serif text-primary font-bold text-[30px]">{tr("التسابيح")}</h1>
+          <p className="font-sans text-muted-foreground text-[14px] font-bold">{totalCompleted} {tr("مكتمل من")}{tasbeehList.length}</p>
         </div>
-        <Link href="/favorites?type=tasbeeh" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-favorites" aria-label="المفضلة">
+        <Link href="/favorites?type=tasbeeh" className="text-muted-foreground hover:text-accent transition-colors" data-testid="link-favorites" aria-label={tr("المفضلة")}>
           <Heart className="w-6 h-6" />
         </Link>
       </div>
@@ -171,7 +171,7 @@ export default function Tasbeeh() {
               <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
                 <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
-              {done && <p className="font-serif text-xs text-primary">✓ الله يبارك فيك</p>}
+              {done && <p className="font-serif text-xs text-primary">{tr("✓ الله يبارك فيك")}</p>}
             </button>
           );
         })}

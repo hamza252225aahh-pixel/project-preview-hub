@@ -1,3 +1,4 @@
+import { useLanguage } from "@/quran/components/language-provider";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "@/quran/wouter-shim";
 import { ChevronRight } from "lucide-react";
@@ -6,24 +7,24 @@ import { Skeleton } from "@/quran/components/ui/skeleton";
 
 /* ── Surah list page ───────────────────────────────────────────────── */
 export default function Tafsir() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const { surahs, loading, error } = useSurahList();
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir="rtl">
+    <div className="max-w-2xl mx-auto space-y-4 pb-10" dir={uiDir}>
       <div className="flex items-center gap-3 pt-2">
         <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
           <ChevronRight className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="font-serif text-2xl text-primary font-bold">تفسير القرآن الكريم</h1>
-          <p className="text-muted-foreground text-sm font-sans">التفسير الميسّر — مجمع الملك فهد</p>
+          <h1 className="font-serif text-2xl text-primary font-bold">{tr("تفسير القرآن الكريم")}</h1>
+          <p className="text-muted-foreground text-sm font-sans">{tr("التفسير الميسّر — مجمع الملك فهد")}</p>
         </div>
       </div>
 
       {error && (
         <div className="p-4 bg-red-50 text-red-700 rounded-xl text-center font-sans text-sm">
-          تعذّر تحميل القائمة.
-        </div>
+          {tr("تعذّر تحميل القائمة.")}</div>
       )}
 
       <div className="space-y-2">
@@ -49,8 +50,7 @@ export default function Tafsir() {
                 <div className="flex-1 min-w-0">
                   <p className="font-serif text-xl text-foreground">{surah.name}</p>
                   <p className="font-sans text-xs text-muted-foreground">
-                    {surah.englishName} — {surah.numberOfAyahs} آية
-                  </p>
+                    {surah.englishName} — {surah.numberOfAyahs} {tr("آية")}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors rotate-180 flex-shrink-0" />
               </Link>
@@ -69,6 +69,7 @@ interface TafsirAyah {
 
 /* ── Tafsir reader ─────────────────────────────────────────────────── */
 export function TafsirReader() {
+  const { t: tr, dir: uiDir, language, locale } = useLanguage();
   const [location] = useLocation();
   const number = parseInt(location.split("/").pop() || "1");
 
@@ -113,7 +114,7 @@ export function TafsirReader() {
   }
 
   return (
-    <div className="space-y-4 pb-10" dir="rtl">
+    <div className="space-y-4 pb-10" dir={uiDir}>
       {/* sticky header */}
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border px-2 py-2 mb-2">
         <div className="flex items-center gap-3">
@@ -123,7 +124,7 @@ export function TafsirReader() {
           {surahName ? (
             <div>
               <h1 className="font-serif text-xl text-primary font-bold">{surahName}</h1>
-              <p className="text-xs text-muted-foreground font-sans">التفسير الميسّر</p>
+              <p className="text-xs text-muted-foreground font-sans">{tr("التفسير الميسّر")}</p>
             </div>
           ) : <Skeleton className="h-6 w-32" />}
         </div>
@@ -131,8 +132,7 @@ export function TafsirReader() {
 
       {error && (
         <div className="mx-2 p-4 bg-red-50 text-red-600 rounded-xl text-center font-sans text-sm">
-          تعذّر تحميل التفسير. يرجى المحاولة لاحقاً.
-        </div>
+          {tr("تعذّر تحميل التفسير. يرجى المحاولة لاحقاً.")}</div>
       )}
 
       {loading && (
@@ -177,7 +177,7 @@ export function TafsirReader() {
                 className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans hover:bg-muted/50 transition-colors"
               >
                 <span className={`font-semibold ${open ? "text-primary" : "text-muted-foreground"}`}>
-                  {open ? "إخفاء التفسير" : "عرض التفسير"}
+                  {open ? tr("إخفاء التفسير") : tr("عرض التفسير")}
                 </span>
                 <ChevronRight
                   className={`w-4 h-4 transition-transform ${open ? "-rotate-90" : "rotate-90"} text-muted-foreground`}
@@ -203,13 +203,12 @@ export function TafsirReader() {
           {number > 1 ? (
             <Link href={`/tafsir/${number - 1}`}
               className="flex items-center gap-1 text-primary font-sans text-sm hover:underline">
-              <ChevronRight className="w-4 h-4" /> السورة السابقة
-            </Link>
+              <ChevronRight className="w-4 h-4" /> {tr("السورة السابقة")}</Link>
           ) : <span />}
           {number < 114 ? (
             <Link href={`/tafsir/${number + 1}`}
               className="flex items-center gap-1 text-primary font-sans text-sm hover:underline">
-              السورة التالية <ChevronRight className="w-4 h-4 rotate-180" />
+              {tr("السورة التالية")}<ChevronRight className="w-4 h-4 rotate-180" />
             </Link>
           ) : <span />}
         </div>

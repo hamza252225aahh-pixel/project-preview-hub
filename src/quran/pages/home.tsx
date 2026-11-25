@@ -1,6 +1,9 @@
 import { Link } from "@/quran/wouter-shim";
 import illuminatedBookAsset from "@/assets/home-buttons/illuminated-book-button.jpg.asset.json";
 import minshawiHeaderUrl from "@/assets/minshawi-header-clear.webp";
+import { useLanguage } from "@/quran/components/language-provider";
+import { LanguagePicker } from "@/quran/components/language-picker";
+import { BookOpen, Sparkles, Headphones, Compass, Clock, Heart } from "lucide-react";
 
 const homeBackground = `${import.meta.env.BASE_URL}quran-home-soft.jpg`;
 const buttonAsset = (name: string) =>
@@ -70,10 +73,12 @@ const homeButtons = [
 ] as const;
 
 export default function Home() {
+  const { language, dir, t } = useLanguage();
+  const icons = [Headphones, Headphones, Sparkles, BookOpen, BookOpen, Clock, Compass, Heart, Heart, Sparkles];
   return (
     <main
       className="quran-home-screen"
-      dir="rtl"
+      dir={dir}
       aria-label="الصفحة الرئيسية"
     >
       <div className="quran-home-art">
@@ -89,15 +94,19 @@ export default function Home() {
           aria-hidden="true"
         />
         <nav className="home-button-stack" aria-label="أقسام التطبيق">
+          <div className="flex flex-wrap items-center justify-between gap-3 py-2"><LanguagePicker/><Link href="/notifications" className="text-sm text-primary underline">{language === "ar" ? "الإعدادات" : "Settings"}</Link></div>
+          <Link href="/quran-english" className="flex items-center gap-3 rounded-lg border border-primary/30 bg-card p-4 text-primary" data-testid="link-quran-english"><BookOpen className="size-6 shrink-0"/><span className="font-semibold">{language === "ar" ? "القرآن الكريم بالإنجليزية" : "Quran in English"}</span></Link>
               <Link
                 href="/illuminated-book"
                 className="home-image-button"
                 data-testid="link-illuminated-book"
                 aria-label="الكتاب المضيئ"
               >
-                <img src={illuminatedBookAsset.url} alt="الكتاب المضيئ — اسأل واعرف وتعلم" draggable={false} />
+                {language === "ar" ? <img src={illuminatedBookAsset.url} alt="الكتاب المضيئ — اسأل واعرف وتعلم" draggable={false} /> : <span className="flex items-center gap-4 rounded-lg border border-border bg-card p-5"><Sparkles className="size-6 shrink-0 text-accent"/><span className="font-semibold text-primary">Illuminated Book</span></span>}
               </Link>
-          {homeButtons.map((button) => (
+          {homeButtons.map((button, index) => {
+            const Icon = icons[index] ?? BookOpen;
+            return (
             <Link
               key={button.href}
               href={button.href}
@@ -105,13 +114,13 @@ export default function Home() {
               data-testid={button.testid}
               aria-label={button.label}
             >
-              <img
+              {language === "en" ? <span className="flex items-center gap-4 rounded-lg border border-border bg-card p-5"><Icon className="size-6 shrink-0 text-accent"/><span className="font-semibold text-primary">{t(button.label)}</span></span> : <img
                 src={buttonAsset(button.image)}
                 alt={button.label}
                 draggable={false}
-              />
+              />}
             </Link>
-          ))}
+          ); })}
           <Link href="/privacy" className="block py-2 text-center text-sm text-muted-foreground underline" data-testid="link-privacy">
             سياسة الخصوصية
           </Link>
