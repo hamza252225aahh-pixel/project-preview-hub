@@ -64,7 +64,10 @@ export default function QuranAudioPlayer() {
         sourceObjectUrlRef.current = cachedUrl;
         setSource({ number, url: cachedUrl });
       })
-      .catch(() => {});
+      .catch(() => {
+        // A large surah could not be assembled: report it instead of spinning forever.
+        if (active && !audioUrl) { setBuffering(false); setPlaying(false); setAudioError(true); }
+      });
 
     return () => {
       active = false;
@@ -78,7 +81,23 @@ export default function QuranAudioPlayer() {
   /* load the surah's recitation; keep playing when the next surah was started automatically */
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !audioSourceUrl || source.number !== number) return;
+    if (!audio) return;
+    if (!audioSourceUrl || source.number !== number) {
+      // The new surah's recitation is still being prepared (large surahs are assembled first):
+      // drop the previous surah's audio now so its time and length never show or play here.
+      if (loadedNumberRef.current !== null && loadedNumberRef.current !== number) {
+        loadedNumberRef.current = null;
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
+        setPlaying(false);
+        setCurrentTime(0);
+        setDuration(0);
+        setAudioError(false);
+        setBuffering(_autoPlayOnMount);
+      }
+      return;
+    }
     // Same surah switching to its saved offline copy: keep playing if it already was.
     const keepPlaying = _autoPlayOnMount || (loadedNumberRef.current === number && !audio.paused);
     _autoPlayOnMount = false;
@@ -103,6 +122,12 @@ export default function QuranAudioPlayer() {
   function togglePlay() {
     const audio = audioRef.current;
     if (!audio) return;
+    if (!audio.getAttribute("src")) {
+      // Recitation still loading: start it as soon as it is ready.
+      _autoPlayOnMount = !_autoPlayOnMount;
+      setBuffering(_autoPlayOnMount);
+      return;
+    }
     if (playing) {
       audio.pause();
       setPlaying(false);
@@ -140,13 +165,13 @@ export default function QuranAudioPlayer() {
 
   function goNext() {
     if (!nextNum) return;
-    _autoPlayOnMount = false; audioRef.current?.pause(); setPlaying(false);
+    _autoPlayOnMount = false; audioRef.current?.pause(); setPlaying(false); setBuffering(false);
     setLocation(`/quran-audio/${nextNum}`);
   }
 
   function goPrev() {
     if (!prevNum) return;
-    _autoPlayOnMount = false; audioRef.current?.pause(); setPlaying(false);
+    _autoPlayOnMount = false; audioRef.current?.pause(); setPlaying(false); setBuffering(false);
     setLocation(`/quran-audio/${prevNum}`);
   }
 
@@ -306,7 +331,7 @@ export default function QuranAudioPlayer() {
         onEnded={handleEnded}
         onWaiting={() => setBuffering(true)}
         onPlaying={() => setBuffering(false)}
-        onError={() => { setAudioError(true); setBuffering(false); setPlaying(false); }}
+        onError={() => { if (!audioRef.current?.getAttribute("src")) return; setAudioError(true); setBuffering(false); setPlaying(false); }}
         preload="none" />
       <p className="font-sans text-xs text-center text-muted-foreground">
         تلاوة الشيخ محمد صديق المنشاوي — رحمه الله
