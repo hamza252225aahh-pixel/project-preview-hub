@@ -77,9 +77,11 @@ export default {
     }
 
     let question;
+    let provided = null;
     try {
       const body = await request.json();
       question = (body.question || "").trim();
+      if (Array.isArray(body.references)) provided = body.references.slice(0, 5);
     } catch {
       return Response.json({ error: "invalid json" }, { status: 400, headers: CORS });
     }
@@ -88,8 +90,7 @@ export default {
     }
 
     try {
-      const corpus = await loadCorpus(env);
-      const matches = searchCorpus(question, corpus, 5);
+      const matches = provided || searchCorpus(question, await loadCorpus(env), 5);
       const context = matches.length
         ? matches.map((r) => `[${r.id}] ${r.label}\n${r.text}`).join("\n\n")
         : "لا توجد";

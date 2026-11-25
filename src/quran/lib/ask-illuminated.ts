@@ -60,6 +60,29 @@ export function searchCorpus(question: string, entries: IndexedEntry[], limit = 
   return scored.slice(0, limit).map((s) => s.entry);
 }
 
+// Cloudflare Worker URL (Gemini answers). Leave empty to use offline search only.
+export const ILLUMINATED_WORKER_URL = "";
+
+async function askWorker(question: string, references: CorpusEntry[]): Promise<string | null> {
+  if (!ILLUMINATED_WORKER_URL) return null;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
+    const res = await fetch(ILLUMINATED_WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, references }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { answer?: string };
+    return data.answer?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
 async function loadIndex(): Promise<IndexedEntry[]> {
   if (cachedIndex) return cachedIndex;
   const url = `${import.meta.env.BASE_URL}data/illuminated-corpus.json`;
@@ -81,6 +104,8 @@ export async function askIlluminated(question: string): Promise<IlluminatedAnswe
   try {
     const index = await loadIndex();
     const matches = searchCorpus(trimmed, index, 5);
+    const aiAnswer = await askWorker(trimmed, matches);
+    if (aiAnswer) return { ok: true, answer: aiAnswer, references: matches };
     if (!matches.length) {
       return {
         ok: false,
