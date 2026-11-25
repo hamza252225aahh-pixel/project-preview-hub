@@ -26,6 +26,8 @@ export const showsBanner = (path: string) => path !== "/" && path !== "";
 
 const KEY = "illuminated-credits";
 export function loadCredits(): number {
+  // Preview/web testing: refill credits so the owner can keep trying (the APK keeps real credits).
+  if (!/^(capacitor:|https?:\/\/localhost)/.test(window.location.origin)) return 9999;
   const v = localStorage.getItem(KEY);
   return v === null ? START_CREDITS : Number(v) || 0;
 }
