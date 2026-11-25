@@ -67,6 +67,22 @@
   --startup-background: #f4f0e7;
   --startup-gold: #e7cd7c;
   --startup-track: #7b713d;
+  --qibla-aligned: 142 72% 42%;
+  --qibla-misaligned: 0 78% 53%;
+}
+
+.qibla-alignment-light {
+  background-color: hsl(var(--muted-foreground));
+  border: 2px solid hsl(var(--background));
+  box-shadow: 0 0 0 1px hsl(var(--border));
+}
+.qibla-alignment-light[data-alignment="aligned"] {
+  background-color: hsl(var(--qibla-aligned));
+  box-shadow: 0 0 0 1px hsl(var(--qibla-aligned) / 0.35), 0 0 12px hsl(var(--qibla-aligned) / 0.55);
+}
+.qibla-alignment-light[data-alignment="misaligned"] {
+  background-color: hsl(var(--qibla-misaligned));
+  box-shadow: 0 0 0 1px hsl(var(--qibla-misaligned) / 0.35), 0 0 12px hsl(var(--qibla-misaligned) / 0.55);
 }
 
 .startup-screen {

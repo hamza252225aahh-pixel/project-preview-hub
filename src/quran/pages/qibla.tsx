@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "@/quran/wouter-shim";
 import { ChevronRight, Compass } from "lucide-react";
 import { Button } from "@/quran/components/ui/button";
+import { getQiblaAlignment, type QiblaAlignment } from "@/quran/lib/qibla-alignment";
 
 const MECCA_LAT = 21.4225;
 const MECCA_LON = 39.8262;
@@ -34,6 +35,11 @@ function QiblaContent() {
   const [hasHeading, setHasHeading] = useState(false);
   const [orientationError, setOrientationError] = useState<string | null>(null);
   const headingRef = useRef<number | null>(null);
+  const [alignment, setAlignment] = useState<QiblaAlignment>("waiting");
+
+  useEffect(() => {
+    setAlignment(previous => getQiblaAlignment(qiblaAngle, hasHeading ? compass : null, previous));
+  }, [qiblaAngle, compass, hasHeading]);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -58,7 +64,12 @@ function QiblaContent() {
 
   useEffect(() => {
     if (!orientationEnabled) return;
-    const timer = window.setTimeout(() => setOrientationError("لم تصل قراءة البوصلة. تأكد من تفعيل المستشعرات؛ الزاوية المعروضة محسوبة من الشمال."), 6000);
+    function expireHeading() {
+      setHasHeading(false);
+      headingRef.current = null;
+      setOrientationError("لم تصل قراءة البوصلة. تأكد من تفعيل المستشعرات؛ الزاوية المعروضة محسوبة من الشمال.");
+    }
+    let timer = window.setTimeout(expireHeading, 6000);
     function handleOrientation(event: DeviceOrientationEvent) {
       const e = event as CompassEvent;
       let heading: number;
@@ -79,6 +90,7 @@ function QiblaContent() {
       setHasHeading(true);
       setOrientationError(null);
       window.clearTimeout(timer);
+      timer = window.setTimeout(expireHeading, 6000);
     }
     window.addEventListener("deviceorientationabsolute", handleOrientation, true);
     window.addEventListener("deviceorientation", handleOrientation, true);
@@ -135,8 +147,15 @@ function QiblaContent() {
       {qiblaAngle !== null && (
         <>
           {distance !== null && <p className="font-sans text-muted-foreground text-sm text-center">المسافة إلى مكة المكرمة: <span className="font-semibold text-primary">{distance.toLocaleString("ar-SA")} كم</span></p>}
-          <div className="flex items-center justify-center py-4">
-            <div className="relative w-72 h-72 shrink-0" role="img" aria-label="بوصلة اتجاه القبلة">
+          <div className="flex flex-col items-center justify-center gap-4 py-4">
+            <span
+              role="status"
+              aria-label={alignment === "aligned" ? "الاتجاه مطابق للقبلة" : alignment === "misaligned" ? "الاتجاه غير مطابق للقبلة" : "بانتظار قراءة صحيحة للبوصلة"}
+              data-testid="qibla-alignment"
+              data-alignment={alignment}
+              className="qibla-alignment-light block h-5 w-5 shrink-0 rounded-full"
+            />
+            <div className="relative w-72 h-72 shrink-0 overflow-hidden rounded-full" role="img" aria-label="بوصلة اتجاه القبلة">
               <svg viewBox="0 0 288 288" className="absolute inset-0 w-full h-full" aria-hidden="true">
                 <circle cx="144" cy="144" r="138" fill="none" stroke="hsl(var(--border))" strokeWidth="2" />
                 <circle cx="144" cy="144" r="120" fill="hsl(var(--card))" />
