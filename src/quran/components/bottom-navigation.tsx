@@ -43,7 +43,7 @@ export function BottomNavigation() {
               key={to}
               to={to}
               aria-current={active ? "page" : undefined}
-              aria-label={label}
+              aria-label={tr(label)}
               preload="intent"
               className={`bottom-navigation-item bottom-navigation-item--${tone} ${active ? "bottom-navigation-item--active" : ""}`}
               style={{ animationDelay: `${80 + items.findIndex((i) => i.to === to) * 70}ms` }}
@@ -52,7 +52,7 @@ export function BottomNavigation() {
               <span className="bottom-navigation-icon" aria-hidden="true">
                 <Icon aria-hidden="true" fill="none" />
               </span>
-              <span className="bottom-navigation-label">{label}</span>
+              <span className="bottom-navigation-label">{tr(label)}</span>
             </Link>
           );
         })}

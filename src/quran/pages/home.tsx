@@ -79,13 +79,13 @@ export default function Home() {
     <main
       className="quran-home-screen"
       dir={dir}
-      aria-label="الصفحة الرئيسية"
+      aria-label={t("الصفحة الرئيسية")}
     >
       <div className="quran-home-art">
         <img
           className="quran-home-header"
           src={minshawiHeaderUrl}
-          alt="فضيلة الشيخ محمد صديق المنشاوي"
+          alt={t("فضيلة الشيخ محمد صديق المنشاوي")}
           draggable={false}
         />
         <div
@@ -93,14 +93,14 @@ export default function Home() {
           style={{ backgroundImage: `url(${homeBackground})` }}
           aria-hidden="true"
         />
-        <nav className="home-button-stack" aria-label="أقسام التطبيق">
+        <nav className="home-button-stack" aria-label={t("أقسام التطبيق")}>
           <div className="flex flex-wrap items-center justify-between gap-3 py-2"><LanguagePicker/><Link href="/notifications" className="text-sm text-primary underline">{language === "ar" ? "الإعدادات" : "Settings"}</Link></div>
           <Link href="/quran-english" className="flex items-center gap-3 rounded-lg border border-primary/30 bg-card p-4 text-primary" data-testid="link-quran-english"><BookOpen className="size-6 shrink-0"/><span className="font-semibold">{language === "ar" ? "القرآن الكريم بالإنجليزية" : "Quran in English"}</span></Link>
               <Link
                 href="/illuminated-book"
                 className="home-image-button"
                 data-testid="link-illuminated-book"
-                aria-label="الكتاب المضيئ"
+                aria-label={t("الكتاب المضيئ")}
               >
                 {language === "ar" ? <img src={illuminatedBookAsset.url} alt="الكتاب المضيئ — اسأل واعرف وتعلم" draggable={false} /> : <span className="flex items-center gap-4 rounded-lg border border-border bg-card p-5"><Sparkles className="size-6 shrink-0 text-accent"/><span className="font-semibold text-primary">Illuminated Book</span></span>}
               </Link>
@@ -112,7 +112,7 @@ export default function Home() {
               href={button.href}
               className="home-image-button"
               data-testid={button.testid}
-              aria-label={button.label}
+              aria-label={t(button.label)}
             >
               {language === "en" ? <span className="flex items-center gap-4 rounded-lg border border-border bg-card p-5"><Icon className="size-6 shrink-0 text-accent"/><span className="font-semibold text-primary">{t(button.label)}</span></span> : <img
                 src={buttonAsset(button.image)}
@@ -122,7 +122,7 @@ export default function Home() {
             </Link>
           ); })}
           <Link href="/privacy" className="block py-2 text-center text-sm text-muted-foreground underline" data-testid="link-privacy">
-            سياسة الخصوصية
+            {t("سياسة الخصوصية")}
           </Link>
         </nav>
       </div>

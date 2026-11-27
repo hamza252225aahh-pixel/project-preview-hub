@@ -1,7 +1,7 @@
 # Tasks
 
-- [ ] Add Arabic/English language selection, translated interface, and question-language answers.
-- [ ] Bundle all 114 surahs in a dedicated English Quran reading page and verify navigation and saved language.
+- [x] Add Arabic/English language selection, translated interface, and question-language answers.
+- [x] Bundle all 114 surahs in a dedicated English Quran reading page and verify navigation and saved language.
 
 - [x] Import the public Quran app repository, routes, media, and Android project while preserving the preview runtime.
 - [x] Verify the Arabic home page, mobile layout, written Quran list, Al-Fatiha reader, and Arabic answer with references in the preview.

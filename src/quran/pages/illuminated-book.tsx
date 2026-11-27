@@ -59,7 +59,7 @@ export default function IlluminatedBook() {
     try {
       const result = await askIlluminated(question.trim());
       if (result.ok) { setAnswer(result); setCredits(c => { const n = afterQuestion(c); saveCredits(n); return n; }); }
-      else { setError(result.error); resetVideo(); }
+      else { setError(tr(result.error)); resetVideo(); }
     } catch { setError(tr("تعذر الاتصال بخدمة الإجابات. حاول لاحقًا.")); resetVideo(); }
     finally { setBusy(false); }
   }
@@ -76,7 +76,7 @@ export default function IlluminatedBook() {
       {showAnswer ? (
         <div className="flex-1 py-7">
           <p className="mb-2 text-sm text-muted-foreground">{tr("سؤالك")}</p>
-          <h2 className="mb-8 break-words text-xl font-semibold leading-9">{submitted}</h2>
+          <h2 dir="auto" className="mb-8 break-words text-xl font-semibold leading-9">{submitted}</h2>
           {!answer ? <p role="status" className="flex items-center gap-2 py-10 text-base font-semibold text-primary"><LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" />{tr("جاري إعداد الإجابة…")}</p> : <>
           <article dir={questionLanguage(submitted) === "en" ? "ltr" : "rtl"} lang={questionLanguage(submitted)} aria-label={tr("الإجابة")} className="prose prose-lg max-w-none break-words text-foreground prose-headings:text-primary prose-p:leading-9 prose-a:text-primary"><ReactMarkdown>{answer.answer}</ReactMarkdown></article>
           <section className="mt-10 border-t pt-6" aria-label={tr("المراجع")}>
@@ -92,16 +92,16 @@ export default function IlluminatedBook() {
           <div className="flex flex-1 flex-col items-center justify-start gap-5 py-7 sm:py-10">
             <div className="relative w-full max-w-xl">
               <video ref={videoRef} src={videoAsset.url} poster="/assets/video/illuminated-book-poster.jpg" playsInline preload="auto" disablePictureInPicture controlsList="nodownload noplaybackrate" onEnded={() => setVideoDone(true)} onError={() => setVideoDone(true)} onContextMenu={e => e.preventDefault()} className="pointer-events-none aspect-video w-full rounded-lg bg-muted" aria-label="فيديو الكتاب المضيئ" />
-              {playing && !videoDone && <Button type="button" size="sm" variant="secondary" className="absolute bottom-3 left-3" onClick={skip}><SkipForward />تخطي</Button>}
+              {playing && !videoDone && <Button type="button" size="sm" variant="secondary" className="absolute bottom-3 left-3" onClick={skip}><SkipForward />{language === "ar" ? "تخطي" : "Skip"}</Button>}
             </div>
             {question.trim().length > 0 && question.trim().length < 3 && !busy && <p className="text-sm text-muted-foreground">{tr("اكتب سؤالًا من ثلاثة أحرف على الأقل.")}</p>}
-            <p className="text-sm font-semibold text-foreground" data-testid="credits">{tr("رصيدك:")}{credits} {tr("كريدت · السؤال يكلّف")}{QUESTION_COST}</p>
-            {!canAsk(credits) && !busy && (() => { const ms = msUntilRefill(); return ms !== null ? <p className="text-xs text-muted-foreground">يُضاف 30 كريدت مجانًا بعد {Math.floor(ms / 3600000)} ساعة و{Math.ceil((ms % 3600000) / 60000)} {tr("دقيقة")}</p> : null; })()}
+            <p className="text-sm font-semibold text-foreground" data-testid="credits">{tr("رصيدك:")} {credits} {tr("كريدت · السؤال يكلّف")} {QUESTION_COST}</p>
+            {!canAsk(credits) && !busy && (() => { const ms = msUntilRefill(); return ms !== null ? <p className="text-xs text-muted-foreground">{language === "ar" ? `يُضاف 30 كريدت مجانًا بعد ${Math.floor(ms / 3600000)} ساعة و${Math.ceil((ms % 3600000) / 60000)} دقيقة` : `30 free credits in ${Math.floor(ms / 3600000)} hours and ${Math.ceil((ms % 3600000) / 60000)} minutes`}</p> : null; })()}
             {!canAsk(credits) && !busy && (
               <div className="w-full max-w-xl space-y-3 rounded-xl border border-border bg-card p-4 text-center">
                 <p className="font-semibold text-foreground">{tr("انتهى رصيدك. شاهد إعلانات فيديو (30 ثانية لكل إعلان) لتحصل على رصيد جديد:")}</p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {AD_PACKAGES.map(p => <Button key={p.ads} type="button" variant="secondary" disabled={adBusy} onClick={() => earn(p.ads)}>{p.ads} {tr("إعلانات =")}{p.credits} {tr("كريدت")}</Button>)}
+                  {AD_PACKAGES.map(p => <Button key={p.ads} type="button" variant="secondary" disabled={adBusy} onClick={() => earn(p.ads)}>{p.ads} {tr("إعلانات =")} {p.credits} {tr("كريدت")}</Button>)}
                 </div>
                 {adMsg && <p className="text-sm text-muted-foreground">{adMsg}</p>}
               </div>
@@ -111,7 +111,7 @@ export default function IlluminatedBook() {
           <form onSubmit={submit} className="sticky bottom-[var(--ad-banner-height,0px)] border-t bg-background pb-4 pt-5">
             <label htmlFor="religious-question" className="mb-3 block text-sm font-semibold">{tr("ما سؤالك؟")}</label>
             <div className="rounded-lg border border-input bg-card p-3 focus-within:ring-1 focus-within:ring-ring">
-              <Textarea id="religious-question" value={question} onChange={e => setQuestion(e.target.value)} placeholder={tr("اكتب سؤالك عن القرآن أو التفسير أو الشريعة أو التاريخ الإسلامي…")} maxLength={2000} disabled={busy} className="min-h-24 resize-none border-0 bg-transparent p-1 shadow-none focus-visible:ring-0" />
+              <Textarea id="religious-question" dir="auto" value={question} onChange={e => setQuestion(e.target.value)} placeholder={tr("اكتب سؤالك عن القرآن أو التفسير أو الشريعة أو التاريخ الإسلامي…")} maxLength={2000} disabled={busy} className="min-h-24 resize-none border-0 bg-transparent p-1 shadow-none focus-visible:ring-0" />
               <div className="mt-3 flex items-center justify-between gap-3"><span className="text-xs text-muted-foreground">{question.length} / ٢٠٠٠</span><Button type="submit" disabled={busy || question.trim().length < 3}>{busy ? <LoaderCircle className="animate-spin motion-reduce:animate-none" /> : <Send />}{tr("التجربة")}</Button></div>
             </div>
             {error && <p role="alert" className="mt-3 break-words text-sm text-foreground">{error}</p>}

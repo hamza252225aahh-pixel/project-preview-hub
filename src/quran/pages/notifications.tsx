@@ -42,7 +42,6 @@ export default function Notifications() {
         {time && <Input type="time" className="w-28" value={s[time] as string} onChange={(e) => set(time, e.target.value as never)} />}
         <Switch checked={s[k] as boolean} onCheckedChange={(v) => set(k, v as never)} />
       </div>
-      <div className="flex items-center justify-between gap-3 border-b py-3"><span className="font-semibold">Language / اللغة</span><LanguagePicker/></div>
     </div>
   );
 
@@ -52,6 +51,7 @@ export default function Notifications() {
         <Link href="/" className="p-2 text-foreground" aria-label={tr("العودة")}><ChevronRight /></Link>
         <h1 className="text-2xl font-bold text-foreground">{tr("الإشعارات والتذكير")}</h1>
       </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b py-3"><span className="font-semibold">{language === "ar" ? "لغة التطبيق" : "App language"}</span><LanguagePicker/></div>
       {row(tr("أذكار الصباح"), "morningEnabled", "morningTime")}
       {row(tr("أذكار المساء"), "eveningEnabled", "eveningTime")}
       {row(tr("تسبيحة أو دعاء كل نصف ساعة"), "halfHourlyEnabled")}

@@ -19,7 +19,7 @@ export default function QuranEnglishReader({ number }: { number: number }) {
     <div className="divide-y divide-border">
       {data.ayahs.map(a => <article key={a.number} className="space-y-4 py-6" data-testid={`english-verse-${a.number}`}>
         <p className="text-xs font-semibold text-muted-foreground">{number}:{a.number}</p>
-        {showArabic && <p className="quran-text text-2xl leading-loose text-primary" dir="rtl" lang="ar">{a.arabic}</p>}
+        {showArabic && <p className="quran-text text-2xl leading-loose text-primary" dir="rtl" lang="ar">{number !== 1 && a.number === 1 ? a.arabic.replace(/^بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ\s*/, "") : a.arabic}</p>}
         <p className="text-lg leading-9 text-foreground">{a.text}</p>
       </article>)}
     </div>
